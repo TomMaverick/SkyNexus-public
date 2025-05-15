@@ -29,11 +29,11 @@
               </padding>
               <HBox alignment="CENTER_LEFT" spacing="10">
                 <FontIcon iconLiteral="mdi-account" styleClass="icon-base, icon-md, icon-light" />
-                <TextField fx:id="loginUsernameField" promptText="Benutzername" text="admin" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="loginUsernameField" promptText="Benutzername" HBox.hgrow="ALWAYS" />
               </HBox>
               <HBox alignment="CENTER_LEFT" spacing="10">
                 <FontIcon iconLiteral="mdi-key" styleClass="icon-base, icon-md, icon-light" />
-                <PasswordField fx:id="loginPasswordField" promptText="Passwort" text="admin123" HBox.hgrow="ALWAYS" />
+                <PasswordField fx:id="loginPasswordField" promptText="Passwort" HBox.hgrow="ALWAYS" />
               </HBox>
               <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" styleClass="btn, btn-primary, btn-square, btn-medium" text="Anmelden">
                 <graphic>
