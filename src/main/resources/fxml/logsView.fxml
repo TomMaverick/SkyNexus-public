@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17"
+      fx:controller="skynexus.controller.LogsViewController" styleClass="login-window">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <Label text="System-Logs" styleClass="section-title" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label fx:id="entryCountLabel" text="0 Einträge" />
+    </HBox>
+
+    <!-- Controls -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <ComboBox fx:id="logFileComboBox" prefWidth="200.0" promptText="Log-Datei auswählen"/>
+        <ComboBox fx:id="logLevelComboBox" prefWidth="100.0" promptText="Level"/>
+        <TextField fx:id="searchField" promptText="Suchen..." HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshButton" onAction="#onRefresh" text="Refresh" />
+    </HBox>
+
+    <!-- Logs Table -->
+    <TableView fx:id="logsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="timestampColumn" prefWidth="150.0" text="Zeit"/>
+            <TableColumn fx:id="levelColumn" prefWidth="60.0" text="Level"/>
+            <TableColumn fx:id="loggerColumn" prefWidth="150.0" text="Logger"/>
+            <TableColumn fx:id="messageColumn" prefWidth="400.0" text="Nachricht"/>
+        </columns>
+        <placeholder>
+            <Label text="Keine Logs gefunden" />
+        </placeholder>
+    </TableView>
+
+    <!-- Status -->
+    <Label fx:id="statusLabel" text="Bereit" />
+</VBox>

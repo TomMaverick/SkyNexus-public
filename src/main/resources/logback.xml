@@ -1,0 +1,63 @@
+<configuration>
+  <!-- Konsolen-Ausgabe ohne Filter -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Datei-Ausgabe ohne Filter -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- Legt die Log-Dateien im "logs" Ordner im Projektverzeichnis ab -->
+    <file>${user.dir}/logs/skynexus.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${user.dir}/logs/skynexus.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- SkyNexus-spezifische Einstellungen mit differenzierten Log-Leveln -->
+  <logger name="skynexus" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Controller auf INFO setzen, außer in speziellen Fällen -->
+  <logger name="skynexus.controller" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Detaillierteres Logging für Service-Klassen -->
+  <logger name="skynexus.service" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Reduziertes Logging für häufige Datenbankoperationen -->
+  <logger name="skynexus.database.DatabaseConnectionManager" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- UINavigationHelper auf INFO setzen -->
+  <logger name="skynexus.util.UINavigationHelper" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Periodische Verbindungsprüfungen reduzieren -->
+  <logger name="skynexus.database" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Grundeinstellung für alle anderen Klassen -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>

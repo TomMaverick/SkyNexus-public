@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Repräsentiert einen Passagier mit persönlichen Daten und Buchungsinformationen.
@@ -23,14 +22,12 @@ public class Passenger {
     private String nationality;          // Nationalität, z.B. "Deutsch"
     private String passportNumber;       // Reisepassnummer 9-stellig, z.B. "DE1234567"
 
-    // Neue Beziehung zu Buchungen
-    private List<Booking> bookings = new ArrayList<>();
+    private final List<Booking> bookings = new ArrayList<>();
 
     /**
      * Standardkonstruktor für ORM-Frameworks
      */
     public Passenger() {
-        // Leerer Konstruktor für Frameworks wie JPA/Hibernate
     }
 
     /**
@@ -62,101 +59,14 @@ public class Passenger {
     }
 
     /**
-     * Fügt eine neue Buchung für diesen Passagier hinzu
-     *
-     * @param flight    Der zu buchende Flug
-     * @param seatClass Die gewünschte Sitzklasse
-     * @return Die neu erstellte Buchung
-     */
-    public Booking addBooking(Flight flight, SeatClass seatClass) {
-        ValidationUtils.validateNotNull(flight, "Flug");
-        ValidationUtils.validateNotNull(seatClass, "Sitzklasse");
-
-        // Prüfen, ob der Flug bereits gebucht ist
-        if (hasBookedFlight(flight)) {
-            throw new IllegalArgumentException("Der Passagier hat diesen Flug bereits gebucht");
-        }
-
-        // Neue Buchung erstellen
-        Booking booking = new Booking(this, flight, seatClass);
-        bookings.add(booking);
-
-        // Passagierzahl für die entsprechende Klasse erhöhen
-        switch (seatClass) {
-            case ECONOMY:
-                flight.setPaxEconomy(flight.getPaxEconomy() + 1);
-                break;
-            case BUSINESS:
-                flight.setPaxBusiness(flight.getPaxBusiness() + 1);
-                break;
-            case FIRST_CLASS:
-                flight.setPaxFirst(flight.getPaxFirst() + 1);
-                break;
-        }
-
-        return booking;
-    }
-
-    /**
-     * Entfernt eine Buchung für diesen Passagier
-     *
-     * @param booking Die zu entfernende Buchung
-     * @return true wenn die Buchung erfolgreich entfernt wurde
-     */
-    public boolean removeBooking(Booking booking) {
-        if (booking == null || !bookings.contains(booking)) {
-            return false;
-        }
-
-        Flight flight = booking.getFlight();
-        SeatClass seatClass = booking.getSeatClass();
-
-        // Passagierzahl für die entsprechende Klasse reduzieren
-        if (flight != null && seatClass != null) {
-            switch (seatClass) {
-                case ECONOMY:
-                    flight.setPaxEconomy(Math.max(0, flight.getPaxEconomy() - 1));
-                    break;
-                case BUSINESS:
-                    flight.setPaxBusiness(Math.max(0, flight.getPaxBusiness() - 1));
-                    break;
-                case FIRST_CLASS:
-                    flight.setPaxFirst(Math.max(0, flight.getPaxFirst() - 1));
-                    break;
-            }
-        }
-
-        return bookings.remove(booking);
-    }
-
-    /**
-     * Prüft, ob der Passagier einen bestimmten Flug bereits gebucht hat
-     *
-     * @param flight Der zu prüfende Flug
-     * @return true wenn der Flug bereits gebucht wurde
-     */
-    public boolean hasBookedFlight(Flight flight) {
-        if (flight == null) {
-            return false;
-        }
-
-        return bookings.stream()
-                .anyMatch(booking -> booking.getFlight().getId().equals(flight.getId()));
-    }
-
-    /**
      * Gibt alle Buchungen dieses Passagiers zurück
-     *
-     * @return Eine unmodifizierbare Liste aller Buchungen
      */
     public List<Booking> getBookings() {
         return Collections.unmodifiableList(bookings);
     }
 
     /**
-     * Setzt die Liste der Buchungen (z.B. beim Laden aus der Datenbank)
-     *
-     * @param bookings Die Liste der Buchungen
+     * Setzt die Liste der Buchungen
      */
     public void setBookings(List<Booking> bookings) {
         this.bookings.clear();
@@ -166,24 +76,17 @@ public class Passenger {
     }
 
     /**
-     * Gibt eine formatierte Liste der aktiven Buchungen als String zurück
-     * Format: "SNX120 (E) - 20.04.2025 - 16:20"
-     * Abgeschlossene Flüge (COMPLETED) werden ausgeblendet.
-     * Flüge werden chronologisch sortiert (nächster Flug zuerst).
-     *
-     * @return Formatierter String mit allen aktiven Buchungen
+     * Gibt eine formatierte Liste der aktiven Buchungen als String zurück.
      */
     public String getBookingsAsString() {
         if (bookings.isEmpty()) {
             return "Keine Buchungen";
         }
 
-        // Filtere abgeschlossene Flüge heraus und sortiere nach Datum/Uhrzeit
         List<Booking> activeBookings = bookings.stream()
                 .filter(booking -> booking.getFlight() != null &&
                         booking.getFlight().getStatus() != skynexus.enums.FlightStatus.COMPLETED)
                 .sorted((b1, b2) -> {
-                    // Sortiere nach Abflugdatum/-zeit (nächster Flug zuerst)
                     Flight f1 = b1.getFlight();
                     Flight f2 = b2.getFlight();
 
@@ -191,97 +94,153 @@ public class Passenger {
                         return 0;
                     }
 
-                    // Vergleiche das Datum
                     int dateCompare = f1.getDepartureDate().compareTo(f2.getDepartureDate());
                     if (dateCompare != 0) {
                         return dateCompare;
                     }
 
-                    // Wenn gleiches Datum, vergleiche die Uhrzeit
                     if (f1.getDepartureTime() != null && f2.getDepartureTime() != null) {
                         return f1.getDepartureTime().compareTo(f2.getDepartureTime());
                     }
 
                     return 0;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         if (activeBookings.isEmpty()) {
             return "Keine aktiven Buchungen";
         }
 
+        Booking nextBooking = activeBookings.get(0);
+        Flight flight = nextBooking.getFlight();
         StringBuilder sb = new StringBuilder();
-        for (Booking booking : activeBookings) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
 
-            Flight flight = booking.getFlight();
+        sb.append(flight.getRouteDisplayName())
+                .append(" (")
+                .append(flight.getFlightNumber())
+                .append(", ")
+                .append(getSeatClassShortName(nextBooking.getSeatClass()))
+                .append(")");
 
-            // Flugnummer und Klasse
-            sb.append(flight.getFlightNumber())
-                    .append(" (")
-                    .append(getSeatClassShortName(booking.getSeatClass()))
-                    .append(")");
+        if (flight.getDepartureDate() != null) {
+            sb.append(" - ")
+                    .append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
-            // Datum und Uhrzeit hinzufügen
-            if (flight.getDepartureDate() != null) {
-                sb.append(" - ")
-                        .append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-
-                if (flight.getDepartureTime() != null) {
-                    sb.append(" - ")
-                            .append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
-                }
+            if (flight.getDepartureTime() != null) {
+                sb.append(", ")
+                        .append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
             }
         }
+
+        int remainingCount = activeBookings.size() - 1;
+        if (remainingCount > 0) {
+            sb.append(" und ").append(remainingCount).append(" weitere");
+        }
+
         return sb.toString();
     }
 
     /**
-     * Gibt eine formatierte Liste aller Buchungen zurück (inklusive abgeschlossener)
-     * Format: "SNX120 (E) - 20.04.2025 - 16:20"
-     *
-     * @return Formatierter String mit allen Buchungen
+     * Gibt eine formatierte Liste aller Buchungen zurück.
      */
     public String getAllBookingsAsString() {
         if (bookings.isEmpty()) {
             return "Keine Buchungen";
         }
 
+        List<Booking> futureBookings = bookings.stream()
+                .filter(booking -> booking.getFlight() != null &&
+                        booking.getFlight().getStatus() != skynexus.enums.FlightStatus.COMPLETED)
+                .sorted((b1, b2) -> {
+                    Flight f1 = b1.getFlight();
+                    Flight f2 = b2.getFlight();
+
+                    if (f1.getDepartureDate() == null || f2.getDepartureDate() == null) {
+                        return 0;
+                    }
+
+                    int dateCompare = f1.getDepartureDate().compareTo(f2.getDepartureDate());
+                    if (dateCompare != 0) {
+                        return dateCompare;
+                    }
+
+                    if (f1.getDepartureTime() != null && f2.getDepartureTime() != null) {
+                        return f1.getDepartureTime().compareTo(f2.getDepartureTime());
+                    }
+
+                    return 0;
+                })
+                .toList();
+
+        if (futureBookings.isEmpty()) {
+            return "Keine zukünftigen Buchungen";
+        }
+
         StringBuilder sb = new StringBuilder();
-        for (Booking booking : bookings) {
-            if (sb.length() > 0) {
+        for (Booking booking : futureBookings) {
+            if (!sb.isEmpty()) {
                 sb.append("\n");
             }
 
             Flight flight = booking.getFlight();
 
-            // Flugnummer und Klasse
-            sb.append(flight.getFlightNumber())
+            sb.append(flight.getRouteDisplayName())
                     .append(" (")
-                    .append(getSeatClassShortName(booking.getSeatClass()))
+                    .append(flight.getFlightNumber())
+                    .append(", ")
+                    .append(getSeatClassFullName(booking.getSeatClass()))
                     .append(")");
 
-            // Datum und Uhrzeit hinzufügen
             if (flight.getDepartureDate() != null) {
                 sb.append(" - ")
                         .append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
                 if (flight.getDepartureTime() != null) {
-                    sb.append(" - ")
+                    sb.append(", ")
                             .append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
                 }
             }
 
-            // Flugstatus hinzufügen
-            sb.append(" - Status: ").append(flight.getStatus());
+            sb.append(" - Status: ").append(getFlightStatusDisplay(flight.getStatus()));
         }
         return sb.toString();
     }
 
     /**
-     * Gibt einen Kurzcode für die Sitzklasse zurück (E, B, FC)
+     * Gibt den vollen Namen der Sitzklasse zurück
+     */
+    private String getSeatClassFullName(SeatClass seatClass) {
+        if (seatClass == null) {
+            return "Unbekannt";
+        }
+        return switch (seatClass) {
+            case ECONOMY -> "Economy";
+            case BUSINESS -> "Business";
+            case FIRST_CLASS -> "First Class";
+        };
+    }
+
+    /**
+     * Gibt eine lokalisierte Anzeige für den Flugstatus zurück
+     */
+    private String getFlightStatusDisplay(skynexus.enums.FlightStatus status) {
+        if (status == null) {
+            return "Unbekannt";
+        }
+        return switch (status) {
+            case SCHEDULED -> "Geplant";
+            case BOARDING -> "Boarding";
+            case DEPARTED -> "Abgeflogen";
+            case FLYING -> "In der Luft";
+            case LANDED -> "Gelandet";
+            case DEPLANING -> "Ausstieg";
+            case COMPLETED -> "Abgeschlossen";
+            case UNKNOWN -> "Unbekannt";
+        };
+    }
+
+    /**
+     * Gibt einen Kurzcode für die Sitzklasse zurück
      */
     private String getSeatClassShortName(SeatClass seatClass) {
         if (seatClass == null) {
@@ -296,24 +255,7 @@ public class Passenger {
     }
 
     /**
-     * Gibt einen benutzerfreundlichen Namen für die Sitzklasse zurück
-     */
-    private String getSeatClassDisplayName(SeatClass seatClass) {
-        if (seatClass == null) {
-            return "Unbekannt";
-        }
-
-        return switch (seatClass) {
-            case ECONOMY -> "Economy";
-            case BUSINESS -> "Business";
-            case FIRST_CLASS -> "First";
-        };
-    }
-
-    /**
      * Berechnet das Alter des Passagiers
-     *
-     * @return Alter in Jahren
      */
     public int getAge() {
         if (this.dateOfBirth == null) {
@@ -323,7 +265,6 @@ public class Passenger {
         LocalDate now = LocalDate.now();
         int age = now.getYear() - this.dateOfBirth.getYear();
 
-        // Geburtstag dieses Jahr schon vorbei?
         if (now.getMonthValue() < this.dateOfBirth.getMonthValue() ||
                 (now.getMonthValue() == this.dateOfBirth.getMonthValue() &&
                         now.getDayOfMonth() < this.dateOfBirth.getDayOfMonth())) {
@@ -332,8 +273,6 @@ public class Passenger {
 
         return age;
     }
-
-    // Getter und Setter mit zentraler Validierung
 
     public Long getId() {
         return this.id;
@@ -406,10 +345,7 @@ public class Passenger {
     }
 
     /**
-     * Setzt die Passnummer mit obligatorischer Validierung und Normalisierung.
-     * Stellt sicher, dass die Passnummer immer einheitlich und korrekt gespeichert wird.
-     *
-     * @param passportNumber Die zu setzende Passnummer
+     * Setzt die Passnummer mit Validierung und Normalisierung.
      */
     public void setPassportNumber(String passportNumber) {
         if (passportNumber == null || passportNumber.trim().isEmpty()) {
@@ -417,24 +353,18 @@ public class Passenger {
             return;
         }
 
-        // Logger für Nachverfolgung
         Logger logger = org.slf4j.LoggerFactory.getLogger(Passenger.class);
 
         try {
-            // Explizit über ValidationUtils normalisieren - KRITISCH für konsistente DB-Speicherung
             String normalized = ValidationUtils.validatePassportNumber(passportNumber);
 
-            // Loggen, wenn eine Normalisierung stattgefunden hat
             if (!normalized.equals(passportNumber)) {
                 logger.info("Passnummer wurde normalisiert: '{}' → '{}'", passportNumber, normalized);
             }
 
-            // Die garantiert normalisierte Version speichern
             this.passportNumber = normalized;
 
         } catch (IllegalArgumentException e) {
-            // WICHTIGE ÄNDERUNG: Wir werfen den Fehler weiter, um sicherzustellen,
-            // dass keine ungültigen Passnummern gespeichert werden
             logger.warn("Ungültige Passnummer '{}' abgelehnt: {}", passportNumber, e.getMessage());
             throw new IllegalArgumentException("Passnummer ungültig: " + e.getMessage());
         }
@@ -442,8 +372,6 @@ public class Passenger {
 
     /**
      * Gibt den vollständigen Namen des Passagiers zurück
-     *
-     * @return Vollständiger Name
      */
     public String getFullName() {
         return this.firstName + " " + this.lastName;

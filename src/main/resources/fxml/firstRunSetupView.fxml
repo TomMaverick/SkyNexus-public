@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="rootVBox" spacing="15.0" styleClass="setup-container" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skynexus.controller.FirstRunSetupController">
+  <padding>
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+  </padding>
+
+  <HBox styleClass="setup-header">
+    <children>
+      <FontIcon iconLiteral="mdi-settings" styleClass="icon-base, icon-lg, icon-accent, setup-header-icon" />
+      <Label styleClass="setup-header-title" text="Systemeinrichtung" />
+    </children>
+  </HBox>
+
+  <Label styleClass="setup-description" text="Willkommen bei SkyNexus! Bitte richten Sie Ihren Standard-Flughafen und Ihre Standard-Airline ein. Diese Einstellungen werden für neue Benutzer und die gesamte Anwendung verwendet." wrapText="true" />
+
+  <GridPane alignment="TOP_CENTER" hgap="30.0" style="-fx-padding: 10 0 0 0;">
+    <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+    </columnConstraints>
+    <rowConstraints>
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+
+      <VBox styleClass="setup-section" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+        <Label styleClass="setup-section-title" text="Standard-Flughafen" />
+        <Separator styleClass="setup-separator" />
+        <GridPane styleClass="setup-grid">
+          <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="220.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" /> </rowConstraints>
+          <children>
+            <Label styleClass="setup-label" text="Name des Flughafens:" GridPane.halignment="RIGHT" />
+            <TextField fx:id="airportNameField" promptText="z.B. Frankfurt Intl. Airport" styleClass="setup-text-field" GridPane.columnIndex="1" />
+
+            <Label styleClass="setup-label" text="Flughafen ICAO (4-stellig):" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <TextField fx:id="airportIcaoField" promptText="z.B. EDDF" styleClass="setup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label styleClass="setup-label" text="Stadt:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+            <TextField fx:id="airportCityField" promptText="z.B. Frankfurt" styleClass="setup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label styleClass="setup-label" text="Land:" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+            <ComboBox fx:id="airportCountryCombo" prefWidth="220.0" styleClass="setup-combobox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label styleClass="setup-label" text="Breitengrad (dezimal):" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+            <TextField fx:id="airportLatField" promptText="z.B. 50.0379 oder 50,0379" styleClass="setup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+            <Label styleClass="setup-label" text="Längengrad (dezimal):" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+            <TextField fx:id="airportLongField" promptText="z.B. 8.5622 oder 8,5622" styleClass="setup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+            <Hyperlink onAction="#coordinateLinkClicked" styleClass="setup-link" text="Koordinaten finden (gpskoordinaten.de)" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+              <GridPane.margin>
+                <Insets top="2.0" />
+              </GridPane.margin>
+            </Hyperlink>
+
+          </children>
+        </GridPane>
+      </VBox>
+
+      <VBox styleClass="setup-section" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+        <Label styleClass="setup-section-title" text="Standard-Airline" />
+        <Separator styleClass="setup-separator" />
+        <GridPane styleClass="setup-grid">
+          <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" prefWidth="220.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" /> <RowConstraints minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" /> </rowConstraints>
+          <children>
+            <Label styleClass="setup-label" text="Name der Airline:" GridPane.halignment="RIGHT" />
+            <TextField fx:id="airlineNameField" promptText="z.B. SkyNexus Air" styleClass="setup-text-field" GridPane.columnIndex="1" />
+
+            <Label styleClass="setup-label" text="Airline ICAO (3-stellig):" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <TextField fx:id="airlineIcaoField" promptText="z.B. SKX" styleClass="setup-text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label fx:id="errorLabel" maxHeight="34.0" minHeight="17.0" prefHeight="17.0" styleClass="error-label" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+              <GridPane.margin>
+                <Insets left="5.0" />
+              </GridPane.margin>
+            </Label>
+
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="setup-button-pane" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+              <children>
+                <Label fx:id="statusLabel" alignment="CENTER_LEFT" maxWidth="Infinity" styleClass="status-label" wrapText="true" HBox.hgrow="ALWAYS">
+                  <HBox.margin>
+                    <Insets left="5.0" />
+                  </HBox.margin>
+                </Label>
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSave" styleClass="btn, btn-primary, btn-rounded" text="Einstellungen speichern">
+                  <graphic>
+                    <FontIcon iconLiteral="mdi-content-save" styleClass="icon-base, icon-sm, icon-light" />
+                  </graphic>
+                </Button>
+              </children>
+            </HBox>
+
+          </children>
+        </GridPane>
+      </VBox>
+    </children>
+  </GridPane>
+
+</VBox>

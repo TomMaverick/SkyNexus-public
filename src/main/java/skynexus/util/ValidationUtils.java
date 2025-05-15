@@ -1,13 +1,10 @@
 package skynexus.util;
 
-import skynexus.model.Aircraft;
 import skynexus.model.Airport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Zentrale Utility-Klasse zur Validierung von Eingabedaten im SkyNexus-System.
@@ -18,9 +15,7 @@ public final class ValidationUtils {
 
     private ValidationUtils() {}
 
-    //==========================================================================
     // Allgemeine Validierungen
-    //==========================================================================
 
     public static void validateNotNull(Object value, String fieldName) {
         if (value == null) {
@@ -38,15 +33,9 @@ public final class ValidationUtils {
 
     /**
      * Parst einen String als Double, der Komma oder Punkt als Dezimaltrennzeichen enthalten kann.
-     * Wirft eine Exception, wenn der String leer, null oder ungültig ist.
-     *
-     * @param value der zu parsende String
-     * @param fieldName Name des Feldes für die Fehlermeldung
-     * @return den geparsten double-Wert
-     * @throws IllegalArgumentException wenn der String leer, null oder nicht als gültige Zahl geparst werden kann
      */
     public static double parseDoubleWithCommaOrPoint(String value, String fieldName) {
-        validateNotEmpty(value, fieldName); // Sicherstellen, dass Input nicht leer ist
+        validateNotEmpty(value, fieldName);
         String normalizedValue = value.trim().replace(',', '.');
         try {
             return Double.parseDouble(normalizedValue);
@@ -70,27 +59,54 @@ public final class ValidationUtils {
         }
     }
 
-    public static void validateRange(int value, int min, int max, String fieldName) {
-        if (value < min || value > max) {
-            logger.warn("Validierung fehlgeschlagen: {} liegt außerhalb des Bereichs [{}, {}] (Wert: {}).", fieldName, min, max, value);
-            throw new IllegalArgumentException(fieldName + " (aktuell: " + value +
-                    ") muss zwischen " + min + " und " + max + " liegen.");
-        }
-    }
-
     public static void validatePattern(String value, String pattern,
                                        String fieldName, String formatDescription) {
-        validateNotEmpty(value, fieldName); // Musterprüfung impliziert nicht leeren String
+        validateNotEmpty(value, fieldName);
         if (!value.matches(pattern)) {
-            logger.warn("Validierung fehlgeschlagen: {} entspricht nicht dem Muster '{}' ('{}').", fieldName, pattern, value);
-            throw new IllegalArgumentException(fieldName + " hat ein ungültiges Format. "
-                    + formatDescription);
+            logger.warn("Validierung fehlgeschlagen: {} entspricht nicht dem Muster '{}'.", fieldName, pattern);
+            throw new IllegalArgumentException(fieldName + " hat ein ungültiges Format. " + formatDescription);
         }
     }
 
-    //==========================================================================
+    // Benutzer und Authentifizierungsvalidierungen
+
+    /**
+     * Prüft, ob ein Benutzername die Mindestlänge erfüllt.
+     */
+    public static void validateUsernameLength(String username, int minLength) {
+        validateNotEmpty(username, "Benutzername");
+        if (username.length() < minLength) {
+            logger.warn("Validierung fehlgeschlagen: Benutzername zu kurz (min. {} Zeichen).", minLength);
+            throw new IllegalArgumentException("Benutzername muss mindestens " + minLength + " Zeichen lang sein");
+        }
+    }
+
+    /**
+     * Prüft, ob ein Benutzername die Standardmindestlänge (3 Zeichen) erfüllt.
+     */
+    public static void validateUsernameLength(String username) {
+        validateUsernameLength(username, 3);
+    }
+
+    /**
+     * Validiert die Löschung eines Benutzers nach Sicherheitsrichtlinien.
+     */
+    public static void validateUserDeletion(String username, Long targetUserId, Long currentUserId) {
+        validateNotEmpty(username, "Benutzername");
+        validateNotNull(targetUserId, "Zielbenutzer-ID");
+
+        // Standard-Admin Schutz
+        if ("admin".equals(username)) {
+            throw new IllegalStateException("Der Standard-Administrator kann nicht gelöscht werden");
+        }
+
+        // Selbstlöschung verhindern
+        if (currentUserId != null && currentUserId.equals(targetUserId)) {
+            throw new IllegalStateException("Sie können sich nicht selbst löschen");
+        }
+    }
+
     // Luftfahrt Validierungen
-    //==========================================================================
 
     public static void validateAirportICAO(String icaoCode) {
         validateNotEmpty(icaoCode, "Flughafen ICAO");
@@ -111,104 +127,49 @@ public final class ValidationUtils {
     public static void validateFlightNumber(String flightNumber) {
         validateNotEmpty(flightNumber, "Flugnummer");
         if (!flightNumber.matches("^[A-Z]{3}\\d{1,4}$")) {
-            logger.warn("Validierung fehlgeschlagen: Ungültige Flugnummer '{}'. Erwartet: 3 Buchstaben + 1-4 Ziffern.", flightNumber);
+            logger.warn("Validierung fehlgeschlagen: Ungültige Flugnummer '{}'.", flightNumber);
             throw new IllegalArgumentException("Ungültige Flugnummer (Format z.B. SKX123 erwartet).");
         }
     }
 
-    public static void validateCapacity(int available, int requested, String message) {
-        if (requested > available) {
-            logger.warn("Validierung fehlgeschlagen: Kapazität nicht ausreichend ({} > {}).", requested, available);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    //==========================================================================
     // Geografische Validierungen
-    //==========================================================================
 
     /**
      * Prüft, ob ein Breitengrad gültig ist (-90 bis 90).
-     * Erwartet einen primitiven double, da Koordinaten jetzt Pflichtfelder sind.
-     *
-     * @param latitude der zu prüfende Breitengrad
-     * @throws IllegalArgumentException wenn der Breitengrad ungültig ist
      */
     public static void validateLatitude(double latitude) {
         if (latitude < -90 || latitude > 90) {
-            logger.warn("Validierung fehlgeschlagen: Breitengrad außerhalb des Bereichs [-90, 90] (Wert: {}).", latitude);
+            logger.warn("Validierung fehlgeschlagen: Breitengrad außerhalb des Bereichs [-90, 90].", latitude);
             throw new IllegalArgumentException("Breitengrad muss zwischen -90 und 90 liegen.");
         }
     }
 
     /**
      * Prüft, ob ein Längengrad gültig ist (-180 bis 180).
-     * Erwartet einen primitiven double, da Koordinaten jetzt Pflichtfelder sind.
-     *
-     * @param longitude der zu prüfende Längengrad
-     * @throws IllegalArgumentException wenn der Längengrad ungültig ist
      */
     public static void validateLongitude(double longitude) {
         if (longitude < -180 || longitude > 180) {
-            logger.warn("Validierung fehlgeschlagen: Längengrad außerhalb des Bereichs [-180, 180] (Wert: {}).", longitude);
+            logger.warn("Validierung fehlgeschlagen: Längengrad außerhalb des Bereichs [-180, 180].", longitude);
             throw new IllegalArgumentException("Längengrad muss zwischen -180 und 180 liegen.");
-        }
-    }
-
-    //==========================================================================
-    // Datums- und Zeitvalidierungen
-    //==========================================================================
-    public static void validateDateNotInPast(LocalDate date, String fieldName) {
-        validateNotNull(date, fieldName);
-        if (date.isBefore(LocalDate.now())) {
-            logger.warn("Validierung fehlgeschlagen: {} liegt in der Vergangenheit ({}).", fieldName, date);
-            throw new IllegalArgumentException(fieldName + " darf nicht in der Vergangenheit liegen.");
         }
     }
 
     /**
      * Prüft, ob ein Datum nicht in der Zukunft liegt.
-     *
-     * @param date das zu prüfende Datum
-     * @param fieldName Name des Feldes für die Fehlermeldung
-     * @throws IllegalArgumentException wenn das Datum null ist oder in der Zukunft liegt
      */
     public static void validateDateNotInFuture(LocalDate date, String fieldName) {
         validateNotNull(date, fieldName);
         if (date.isAfter(LocalDate.now())) {
-            logger.warn("Validierung fehlgeschlagen: {} liegt in der Zukunft ({}).", fieldName, date);
+            logger.warn("Validierung fehlgeschlagen: {} liegt in der Zukunft.", fieldName);
             throw new IllegalArgumentException(fieldName + " darf nicht in der Zukunft liegen.");
         }
     }
 
-    public static void validateArrivalAfterDeparture(LocalDateTime departure, LocalDateTime arrival) {
-        validateNotNull(departure, "Abflugzeitpunkt");
-        validateNotNull(arrival, "Ankunftszeitpunkt");
-        if (!arrival.isAfter(departure)) {
-            logger.warn("Validierung fehlgeschlagen: Ankunft ({}) liegt nicht nach Abflug ({}).", arrival, departure);
-            throw new IllegalArgumentException("Ankunftszeit muss nach Abflugzeit liegen.");
-        }
-    }
-
-    public static boolean isValidFlightTime(LocalDate departureDate, LocalTime departureTime,
-                                            LocalDate arrivalDate, LocalTime arrivalTime) {
-        try {
-            validateNotNull(departureDate, "Abflugdatum");
-            validateNotNull(departureTime, "Abflugzeit");
-            validateNotNull(arrivalDate, "Ankunftsdatum");
-            validateNotNull(arrivalTime, "Ankunftszeit");
-            LocalDateTime departure = LocalDateTime.of(departureDate, departureTime);
-            LocalDateTime arrival = LocalDateTime.of(arrivalDate, arrivalTime);
-            return arrival.isAfter(departure);
-        } catch (Exception e) {
-            logger.error("Fehler bei der Prüfung der Flugzeit: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    //==========================================================================
     // Reisepass Validierungen
-    //==========================================================================
+
+    /**
+     * Validiert eine Passnummer.
+     */
     public static String validatePassportNumber(String passportNumber) {
         logger.debug("Validiere Passnummer: '{}'", passportNumber);
         ValidationResult result = validatePassportNumberInternal(passportNumber);
@@ -221,78 +182,61 @@ public final class ValidationUtils {
     }
 
     private static ValidationResult validatePassportNumberInternal(String passportNumber) {
-        if (passportNumber == null) return ValidationResult.invalid("Reisepassnummer darf nicht null sein.");
+        if (passportNumber == null)
+            return ValidationResult.invalid("Reisepassnummer darf nicht null sein.");
+
         String trimmed = passportNumber.trim();
-        if (trimmed.isEmpty()) return ValidationResult.invalid("Reisepassnummer darf nicht leer sein.");
+        if (trimmed.isEmpty())
+            return ValidationResult.invalid("Reisepassnummer darf nicht leer sein.");
+
         String normalized = trimmed.toUpperCase();
-        if (!normalized.equals(passportNumber)) logger.trace("Normalisiert: '{}' → '{}'", passportNumber, normalized);
-        if (normalized.length() != 9) return ValidationResult.invalid("Ungültige Passnummer: Format muss Ländercode (2 Zeichen) + 7 alphanumerische Zeichen sein, gefunden: " + normalized.length() + " Zeichen.");
+        if (normalized.length() != 9)
+            return ValidationResult.invalid("Ungültige Passnummer: Format muss Ländercode (2 Zeichen) + 7 alphanumerische Zeichen sein.");
+
         String countryCode = normalized.substring(0, 2);
         String number = normalized.substring(2);
-        if (!countryCode.matches("[A-Z]{2}")) return ValidationResult.invalid("Ungültiger Ländercode '" + countryCode + "'. Muss aus 2 Großbuchstaben bestehen.");
+
+        if (!countryCode.matches("[A-Z]{2}"))
+            return ValidationResult.invalid("Ungültiger Ländercode '" + countryCode + "'. Muss aus 2 Großbuchstaben bestehen.");
+
         if (!number.matches("[A-Z0-9]{7}")) {
-            StringBuilder invalidChars = new StringBuilder();
-            for (int i = 0; i < number.length(); i++) {
-                char c = number.charAt(i);
-                if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) invalidChars.append(c);
-            }
-            String errorMsg = "Ungültiger Nummernteil. Muss aus 7 alphanumerischen Zeichen bestehen (nur Großbuchstaben und Ziffern).";
-            if (invalidChars.length() > 0) errorMsg += " Ungültige Zeichen: " + invalidChars;
-            return ValidationResult.invalid(errorMsg);
+            return ValidationResult.invalid("Ungültiger Nummernteil. Muss aus 7 alphanumerischen Zeichen bestehen (nur Großbuchstaben und Ziffern).");
         }
+
         return ValidationResult.valid(normalized);
     }
 
     private static class ValidationResult {
-        final boolean valid; final String normalizedValue; final String errorMessage;
-        ValidationResult(boolean v, String n, String e) { valid = v; normalizedValue = n; errorMessage = e; }
-        boolean isValid() { return valid; } String getNormalizedValue() { return normalizedValue; } String getErrorMessage() { return errorMessage; }
+        final boolean valid;
+        final String normalizedValue;
+        final String errorMessage;
+
+        ValidationResult(boolean v, String n, String e) {
+            valid = v;
+            normalizedValue = n;
+            errorMessage = e;
+        }
+
+        boolean isValid() { return valid; }
+        String getNormalizedValue() { return normalizedValue; }
+        String getErrorMessage() { return errorMessage; }
+
         static ValidationResult valid(String n) { return new ValidationResult(true, n, null); }
         static ValidationResult invalid(String e) { return new ValidationResult(false, null, e); }
     }
 
-    //==========================================================================
-    // Modell-spezifische Validierungen
-    //==========================================================================
-    public static void validateAircraftLocation(Aircraft aircraft, Airport requiredLocation) throws IllegalArgumentException {
-        validateNotNull(aircraft, "Flugzeug");
-        validateNotNull(requiredLocation, "Erforderlicher Standort");
-        Airport currentLocation = aircraft.getCurrentLocation();
-        if (currentLocation == null) {
-            logger.warn("Validierung fehlgeschlagen: Flugzeug '{}' hat keinen definierten Standort.", aircraft.getRegistrationNo());
-            throw new IllegalArgumentException("Das Flugzeug '" + aircraft.getRegistrationNo() + "' hat keinen definierten Standort.");
-        }
-        if (requiredLocation.getId() == null) {
-            logger.error("Validierung nicht möglich: Erforderlicher Standort '{}' hat keine ID.", requiredLocation.getIcaoCode());
-            throw new IllegalStateException("Erforderlicher Standort hat keine ID für den Vergleich.");
-        }
-        if (!requiredLocation.getId().equals(currentLocation.getId())) {
-            logger.warn("Validierung fehlgeschlagen: Flugzeug '{}' ist in {} (ID:{}), benötigt wird {} (ID:{}).", aircraft.getRegistrationNo(), currentLocation.getIcaoCode(), currentLocation.getId(), requiredLocation.getIcaoCode(), requiredLocation.getId());
-            throw new IllegalArgumentException("Das Flugzeug '" + aircraft.getRegistrationNo() + "' befindet sich in " + currentLocation.getIcaoCode() + ", nicht am erforderlichen Standort " + requiredLocation.getIcaoCode() + ".");
-        }
-        logger.debug("Flugzeug '{}' befindet sich am korrekten Standort {}.", aircraft.getRegistrationNo(), requiredLocation.getIcaoCode());
-    }
-
     /**
      * Initialisiert einen Airport als Standardflughafen, wenn er null ist.
-     * Lädt den Default-Flughafen aus den Systemeinstellungen.
-     *
-     * @param location Der zu prüfende Flughafen-Standort
-     * @return Ein gültiger Airport, entweder der übergebene oder der Default-Flughafen
      */
     public static Airport validateAndGetDefaultAirport(Airport location) {
         if (location != null) return location;
 
         try {
-            // Systemeinstellungen-Service importieren und Singleton-Instanz holen
             skynexus.service.SystemSettingsService settingsService = skynexus.service.SystemSettingsService.getInstance();
-            // Default Airport ID aus den Systemeinstellungen holen
             Long defaultAirportId = settingsService.getDefaultAirportId();
 
-            // Airport aus der Datenbank laden
-            String sql = "SELECT * FROM airports WHERE id = ?";
             Airport defaultAirport = skynexus.database.DatabaseHelper.executeQuery(
-                sql,
+                "SELECT * FROM airports WHERE id = ?",
                 rs -> {
                     if (rs.next()) {
                         Airport airport = new Airport();
@@ -301,7 +245,6 @@ public final class ValidationUtils {
                         airport.setName(rs.getString("name"));
                         airport.setCity(rs.getString("city"));
 
-                        // Optional: Auch Land und Koordinaten setzen, wenn vorhanden
                         try { airport.setCountry(rs.getString("country")); } catch (Exception ignored) {}
                         try { airport.setLatitude(rs.getDouble("latitude")); } catch (Exception ignored) {}
                         try { airport.setLongitude(rs.getDouble("longitude")); } catch (Exception ignored) {}
@@ -314,11 +257,10 @@ public final class ValidationUtils {
             );
 
             if (defaultAirport != null) {
-                logger.debug("Default-Flughafen aus DB geladen: {} (ID: {})", defaultAirport.getIcaoCode(), defaultAirport.getId());
+                logger.debug("Default-Flughafen aus DB geladen: {}", defaultAirport.getIcaoCode());
                 return defaultAirport;
             }
 
-            // Fallback, wenn DB-Zugriff fehlschlägt
             logger.warn("Konnte Default-Flughafen nicht laden, verwende Fallback-Werte.");
             Airport fallbackAirport = new Airport();
             fallbackAirport.setId(1L);
@@ -329,7 +271,6 @@ public final class ValidationUtils {
 
         } catch (Exception e) {
             logger.error("Fehler beim Laden des Default-Flughafens: {}", e.getMessage());
-            // Fallback, wenn ein Fehler auftritt
             Airport fallbackAirport = new Airport();
             fallbackAirport.setId(1L);
             fallbackAirport.setIcaoCode("EDDF");

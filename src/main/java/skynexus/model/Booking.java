@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
  * Jeder Passagier kann mehrere Flüge buchen, und jeder Flug kann mehrere Passagiere haben.
  */
 public class Booking {
-    // Attribute
     private Long id;
     private Passenger passenger;
     private Flight flight;
@@ -56,99 +55,42 @@ public class Booking {
         this.setBookingDate(bookingDate);
     }
 
-    /**
-     * Gibt die ID der Buchung zurück.
-     *
-     * @return ID der Buchung
-     */
+
     public Long getId() {
         return id;
     }
 
-    /**
-     * Setzt die ID der Buchung.
-     *
-     * @param id Die neue ID
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Gibt den Passagier zurück, der die Buchung getätigt hat.
-     *
-     * @return Der Passagier
-     */
     public Passenger getPassenger() {
         return passenger;
     }
 
-    /**
-     * Setzt den Passagier für die Buchung.
-     *
-     * @param passenger Der neue Passagier
-     * @throws IllegalArgumentException wenn der Passagier null ist
-     */
     public void setPassenger(Passenger passenger) {
         ValidationUtils.validateNotNull(passenger, "Passagier");
         this.passenger = passenger;
     }
 
-    /**
-     * Gibt den gebuchten Flug zurück.
-     *
-     * @return Der Flug
-     */
     public Flight getFlight() {
         return flight;
     }
 
-    /**
-     * Setzt den Flug für die Buchung.
-     *
-     * @param flight Der neue Flug
-     * @throws IllegalArgumentException wenn der Flug null ist
-     */
     public void setFlight(Flight flight) {
         ValidationUtils.validateNotNull(flight, "Flug");
         this.flight = flight;
     }
 
-    /**
-     * Gibt die gebuchte Sitzklasse zurück.
-     *
-     * @return Die Sitzklasse
-     */
     public SeatClass getSeatClass() {
         return seatClass;
     }
 
-    /**
-     * Setzt die Sitzklasse für die Buchung.
-     *
-     * @param seatClass Die neue Sitzklasse
-     * @throws IllegalArgumentException wenn die Sitzklasse null ist
-     */
     public void setSeatClass(SeatClass seatClass) {
         ValidationUtils.validateNotNull(seatClass, "Sitzklasse");
         this.seatClass = seatClass;
     }
 
-    /**
-     * Gibt das Datum und die Uhrzeit der Buchung zurück.
-     *
-     * @return Buchungsdatum und -uhrzeit (UTC)
-     */
-    public LocalDateTime getBookingDate() {
-        return bookingDate;
-    }
-
-    /**
-     * Setzt das Datum und die Uhrzeit der Buchung.
-     * Falls null übergeben wird, wird das aktuelle Datum verwendet.
-     *
-     * @param bookingDate Das neue Buchungsdatum oder null für aktuelles Datum
-     */
     public void setBookingDate(LocalDateTime bookingDate) {
         this.bookingDate = bookingDate != null ? bookingDate : LocalDateTime.now();
     }

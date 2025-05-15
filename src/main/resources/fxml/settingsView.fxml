@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import java.net.URL?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/23.0.1"
+            fx:controller="skynexus.controller.SettingsViewController">
+  <stylesheets>
+    <URL value="@../css/style.css"/>
+  </stylesheets>
+  <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+             AnchorPane.topAnchor="0.0">
+    <VBox spacing="10.0" styleClass="dashboard-container" VBox.vgrow="ALWAYS">
+
+      <!-- Datenbankeinstellungen-Bereich -->
+      <VBox spacing="5.0" styleClass="dashboard-section" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" maxHeight="45.0" minHeight="45.0" prefHeight="45.0"
+              styleClass="dashboard-section-header">
+          <padding>
+            <Insets bottom="10.0" left="15.0" right="15.0" top="10.0"/>
+          </padding>
+          <FontIcon iconLiteral="mdi-database" iconSize="24" styleClass="icon-base, icon-md, icon-accent">
+            <HBox.margin>
+              <Insets right="10.0"/>
+            </HBox.margin>
+          </FontIcon>
+          <Label fx:id="settingsTitleLabel" styleClass="dashboard-section-title" text="Einstellungen"/>
+        </HBox>
+
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+          </padding>
+
+          <!-- Grundlegende Datenbankeinstellungen -->
+          <VBox spacing="10.0" styleClass="dashboard-card" VBox.vgrow="ALWAYS">
+            <padding>
+              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <FontIcon iconLiteral="mdi-server" iconSize="22" styleClass="icon-base, icon-md, icon-accent"/>
+              <Label styleClass="dashboard-title" text="Datenbank Einstellungen"/>
+            </HBox>
+            <Separator/>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="dbHostLabel" minWidth="180" text="Datenbank Host:"/>
+              <TextField fx:id="dbHostField" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="dbNameLabel" minWidth="180" text="Datenbank Name:"/>
+              <TextField fx:id="dbNameField" maxWidth="300.0" minWidth="300.0" prefWidth="300" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="dbUserLabel" minWidth="180" text="Benutzername:"/>
+              <TextField fx:id="dbUserField" maxWidth="300.0" minWidth="300.0" prefWidth="300" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="dbPasswordLabel" minWidth="180" text="Passwort:"/>
+              <PasswordField fx:id="dbPasswordField" maxWidth="300.0" minWidth="300.0" prefWidth="300"
+                             HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="maxConnectionsLabel" minWidth="180" text="Maximale Verbindungen:"/>
+              <TextField fx:id="maxConnectionsField" maxWidth="300.0" minWidth="300.0" prefWidth="300"
+                         HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="connectionTimeoutLabel" minWidth="180" text="Verbindungs-Timeout (ms):"/>
+              <TextField fx:id="connectionTimeoutField" maxWidth="300.0" minWidth="300.0" prefWidth="300"
+                         HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+              <Label fx:id="checkIntervalLabel" minWidth="180" text="Verbindungsprüfung (s):"/>
+              <TextField fx:id="checkIntervalField" maxWidth="300.0" minWidth="300.0" prefWidth="300"
+                         HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+              <Button fx:id="saveButton" prefWidth="150.0" styleClass="btn, btn-primary, btn-medium, btn-rounded">
+                <graphic>
+                  <FontIcon iconLiteral="mdi-content-save" iconSize="18"
+                            styleClass="icon-base, icon-sm, icon-light"/>
+                </graphic>
+                <HBox.margin>
+                  <Insets/>
+                </HBox.margin>
+                <padding>
+                  <Insets bottom="8.0" left="15.0" right="15.0" top="8.0"/>
+                </padding>
+              </Button>
+              <opaqueInsets>
+                <Insets/>
+              </opaqueInsets>
+              <VBox.margin>
+                <Insets top="20.0"/>
+              </VBox.margin>
+            </HBox>
+          </VBox>
+        </VBox>
+      </VBox>
+    </VBox>
+  </StackPane>
+</AnchorPane>

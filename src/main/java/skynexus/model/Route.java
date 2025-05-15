@@ -1,71 +1,77 @@
 package skynexus.model;
 
 import skynexus.util.FlightUtils;
+import skynexus.util.TimeUtils;
 import skynexus.util.ValidationUtils;
 
 /**
  * Repräsentiert eine Route zwischen zwei Flughäfen.
  * Eine Route kann mehrere konkrete Flüge haben.
+ * Verwendet vereinfachte Route-Codes im Format "EDDF-KJFK".
  */
 public class Route {
-    private Long id;                     // Primärschlüssel in der Datenbank
-    private String routeCode;            // Eindeutiger Route-Code, z.B. "DLH-EDDF-KJFK"
-    private Airport departureAirport;    // Abflughafen
-    private Airport arrivalAirport;      // Zielflughafen
-    private double distanceKm;           // Entfernung in Kilometern, z.B. 6200.0
-    private int flightTimeMinutes;       // Flugzeit in Minuten, z.B. 480
-    private Airline operator;            // Betreibende Fluggesellschaft
-    private boolean active;              // Ist die Route aktiv?
+    private Long id;
+    private String routeCode;
+    private Airport departureAirport;
+    private Airport arrivalAirport;
+    private double distanceKm;
+    private int flightTimeMinutes;
+    private Airline operator;
+    private boolean active;
 
     /**
-     * Default-Konstruktor
+     * Erstellt eine leere Route mit aktivem Status.
      */
     public Route() {
         this.active = true;
     }
 
     /**
-     * Konstruktor mit grundlegenden Attributen
+     * Erstellt eine Route mit grundlegenden Attributen und berechnet automatisch
+     * den Routencode und die Distanz.
+     *
+     * @param departureAirport Abflughafen
+     * @param arrivalAirport Zielflughafen
+     * @param operator Betreibende Fluggesellschaft
+     * @throws IllegalArgumentException wenn einer der Parameter null ist
      */
     public Route(Airport departureAirport, Airport arrivalAirport, Airline operator) {
-        this(); // Ruft den Default-Konstruktor auf
-        this.setDepartureAirport(departureAirport);
-        this.setArrivalAirport(arrivalAirport);
-        this.setOperator(operator);
+        this();
+        setDepartureAirport(departureAirport);
+        setArrivalAirport(arrivalAirport);
+        setOperator(operator);
         generateRouteCode();
         calculateDistance();
     }
 
     /**
-     * Generiert einen Route-Code basierend auf Operator und Flughäfen
+     * Generiert einen Route-Code basierend auf Operator und Flughäfen.
+     * Format: "EDDF-KJFK"
      */
     private void generateRouteCode() {
         if (this.operator != null && this.operator.getIcaoCode() != null &&
                 this.departureAirport != null && this.arrivalAirport != null) {
 
             this.routeCode = FlightUtils.generateRouteCode(
-                    this.operator.getIcaoCode(),
                     this.departureAirport.getIcaoCode(),
                     this.arrivalAirport.getIcaoCode());
         }
     }
 
     /**
-     * Berechnet die Distanz zwischen den Flughäfen und schätzt die Flugzeit
+     * Berechnet die Distanz zwischen den Flughäfen und schätzt die Flugzeit.
+     * Verwendet die Haversine-Formel für die Distanzberechnung und eine
+     * Standardgeschwindigkeit von 800 km/h für die initiale Flugzeitschätzung.
      */
     private void calculateDistance() {
         if (this.departureAirport != null && this.arrivalAirport != null) {
-            // Distanz mit Haversine-Formel berechnen
             setDistanceKm(FlightUtils.calculateDistance(this.departureAirport, this.arrivalAirport));
 
-            // Standardgeschwindigkeit für eine vorläufige Berechnung
             double defaultSpeed = 800.0; // km/h
             int estimatedMinutes = FlightUtils.calculateFlightTime(this.distanceKm, defaultSpeed);
-            setFlightTimeMinutes(estimatedMinutes > 0 ? estimatedMinutes : 60); // Mindestens 60 Minuten
+            setFlightTimeMinutes(estimatedMinutes > 0 ? estimatedMinutes : 60);
         }
     }
-
-    // Getter und Setter mit zentraler Validierung
 
     public Long getId() {
         return this.id;
@@ -87,10 +93,17 @@ public class Route {
         return this.departureAirport;
     }
 
+    /**
+     * Setzt den Abflughafen und aktualisiert den Route-Code, wenn alle notwendigen
+     * Informationen vorhanden sind.
+     *
+     * @param departureAirport Der neue Abflughafen
+     * @throws IllegalArgumentException wenn der Abflughafen null ist
+     */
     public void setDepartureAirport(Airport departureAirport) {
         ValidationUtils.validateNotNull(departureAirport, "Abflughafen");
         this.departureAirport = departureAirport;
-        // Route-Code aktualisieren, wenn sich ein Flughafen ändert
+
         if (this.arrivalAirport != null && this.operator != null) {
             generateRouteCode();
         }
@@ -100,10 +113,17 @@ public class Route {
         return this.arrivalAirport;
     }
 
+    /**
+     * Setzt den Zielflughafen und aktualisiert den Route-Code, wenn alle notwendigen
+     * Informationen vorhanden sind.
+     *
+     * @param arrivalAirport Der neue Zielflughafen
+     * @throws IllegalArgumentException wenn der Zielflughafen null ist
+     */
     public void setArrivalAirport(Airport arrivalAirport) {
         ValidationUtils.validateNotNull(arrivalAirport, "Zielflughafen");
         this.arrivalAirport = arrivalAirport;
-        // Route-Code aktualisieren, wenn sich ein Flughafen ändert
+
         if (this.departureAirport != null && this.operator != null) {
             generateRouteCode();
         }
@@ -131,9 +151,17 @@ public class Route {
         return this.operator;
     }
 
+    /**
+     * Setzt die betreibende Fluggesellschaft und aktualisiert den Route-Code,
+     * wenn alle notwendigen Informationen vorhanden sind.
+     *
+     * @param operator Die neue betreibende Fluggesellschaft
+     * @throws IllegalArgumentException wenn der Operator null ist
+     */
     public void setOperator(Airline operator) {
         ValidationUtils.validateNotNull(operator, "Betreiber");
         this.operator = operator;
+
         if (this.departureAirport != null && this.arrivalAirport != null) {
             generateRouteCode();
         }
@@ -147,20 +175,35 @@ public class Route {
         this.active = active;
     }
 
-    /**
-     * Formatierte Darstellung der Flugzeit
-     *
-     * @return Flugzeit im Format HH:MM
-     */
     public String getFormattedFlightTime() {
-        int hours = this.flightTimeMinutes / 60;
-        int minutes = this.flightTimeMinutes % 60;
-        return String.format("%02d:%02d", hours, minutes);
+        return TimeUtils.formatMinutesAsHHMM(this.flightTimeMinutes);
     }
 
+    /**
+     * Erstellt eine String-Repräsentation der Route.
+     *
+     * @return Die Route im Format "EDDF-KJFK (EDDF -> KJFK, 08:20)"
+     */
     @Override
     public String toString() {
         return this.routeCode + " (" + this.departureAirport.getIcaoCode() + " -> " +
                 this.arrivalAirport.getIcaoCode() + ", " + getFormattedFlightTime() + ")";
+    }
+
+    /**
+     * Gibt eine kompakte Route-Darstellung für UI zurück.
+     * Format: "Frankfurt → New York"
+     *
+     * @return Kompakte Routendarstellung
+     */
+    public String getDisplayName() {
+        if (departureAirport == null || arrivalAirport == null) {
+            return routeCode != null ? routeCode : "Unbekannte Route";
+        }
+
+        String depCity = departureAirport.getCity() != null ? departureAirport.getCity() : departureAirport.getIcaoCode();
+        String arrCity = arrivalAirport.getCity() != null ? arrivalAirport.getCity() : arrivalAirport.getIcaoCode();
+
+        return depCity + " → " + arrCity;
     }
 }

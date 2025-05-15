@@ -4,12 +4,10 @@ import skynexus.util.ValidationUtils;
 
 /**
  * Repräsentiert einen Flugzeughersteller in der Datenbank.
- * Ersetzt das frühere Manufacturer-Enum mit einer vollwertigen Entitätsklasse,
- * die direkt aus der Datenbank geladen werden kann.
  */
 public class Manufacturer {
-    private Long id;             // Primärschlüssel in der Datenbank
-    private String name;         // Name des Herstellers (z.B. "Airbus", "Boeing")
+    private Long id;
+    private String name;
 
     /**
      * Standard-Konstruktor für Frameworks/JDBC.
@@ -21,25 +19,11 @@ public class Manufacturer {
      * Konstruktor zum Erstellen eines neuen Herstellers mit allen Pflichtfeldern.
      *
      * @param name Name des Herstellers (nicht leer).
+     * @throws IllegalArgumentException wenn der Name leer ist
      */
     public Manufacturer(String name) {
-        ValidationUtils.validateNotEmpty(name, "Herstellername");
-        this.name = name;
+        setName(name);
     }
-
-    /**
-     * Voller Konstruktor mit ID.
-     *
-     * @param id   Datenbank-ID des Herstellers.
-     * @param name Name des Herstellers (nicht leer).
-     */
-    public Manufacturer(Long id, String name) {
-        ValidationUtils.validateNotEmpty(name, "Herstellername");
-        this.id = id;
-        this.name = name;
-    }
-
-    // --- Getter und Setter ---
 
     public Long getId() {
         return id;
@@ -61,7 +45,7 @@ public class Manufacturer {
     /**
      * Gibt eine String-Repräsentation des Herstellers zurück.
      *
-     * @return Der Name des Herstellers.
+     * @return Der Name des Herstellers
      */
     @Override
     public String toString() {
@@ -73,19 +57,18 @@ public class Manufacturer {
      * Zwei Manufacturer-Objekte gelten als gleich, wenn ihre IDs übereinstimmen (sofern vorhanden)
      * oder wenn ihre Namen übereinstimmen.
      *
-     * @param o Das zu vergleichende Objekt.
-     * @return true, wenn die Objekte gleich sind, sonst false.
+     * @param o Das zu vergleichende Objekt
+     * @return true, wenn die Objekte gleich sind, sonst false
      */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Manufacturer that = (Manufacturer) o;
-        // Primärer Vergleich über ID, falls vorhanden und ungleich null
+
         if (id != null && that.id != null) {
             return id.equals(that.id);
         }
-        // Fallback-Vergleich über Namen (wenn IDs fehlen oder null sind)
         return name.equals(that.name);
     }
 
@@ -93,15 +76,10 @@ public class Manufacturer {
      * Gibt einen Hashcode für dieses Manufacturer-Objekt zurück.
      * Basiert auf der ID (sofern vorhanden) oder auf dem Namen.
      *
-     * @return Der Hashcode.
+     * @return Hashcode
      */
     @Override
     public int hashCode() {
-        // Hashcode basiert primär auf ID, falls vorhanden
-        if (id != null) {
-            return id.hashCode();
-        }
-        // Fallback-Hashcode
-        return name.hashCode();
+        return id != null ? id.hashCode() : name.hashCode();
     }
 }

@@ -11,7 +11,6 @@ import java.util.Objects;
  * und die Betriebskosten pro Stunde.
  */
 public class AircraftType {
-    // Attribute
     private Long id;
     private Manufacturer manufacturer;
     private String model;
@@ -50,169 +49,78 @@ public class AircraftType {
         this.setCostPerHour(costPerHour);
     }
 
-    /**
-     * Gibt die ID des Flugzeugtyps zurück.
-     *
-     * @return ID des Flugzeugtyps
-     */
+
     public Long getId() {
         return id;
     }
 
-    /**
-     * Setzt die ID des Flugzeugtyps.
-     *
-     * @param id Die neue ID
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Gibt den Hersteller des Flugzeugtyps zurück.
-     *
-     * @return Hersteller des Flugzeugtyps
-     */
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
 
-    /**
-     * Setzt den Hersteller des Flugzeugtyps.
-     *
-     * @param manufacturer Der neue Hersteller
-     * @throws IllegalArgumentException wenn der Hersteller null ist
-     */
     public void setManufacturer(Manufacturer manufacturer) {
         ValidationUtils.validateNotNull(manufacturer, "Hersteller");
         this.manufacturer = manufacturer;
     }
 
-    /**
-     * Gibt die Modellbezeichnung des Flugzeugtyps zurück.
-     *
-     * @return Modellbezeichnung
-     */
     public String getModel() {
         return model;
     }
 
-    /**
-     * Setzt die Modellbezeichnung des Flugzeugtyps.
-     *
-     * @param model Die neue Modellbezeichnung
-     * @throws IllegalArgumentException wenn die Modellbezeichnung leer ist
-     */
     public void setModel(String model) {
         ValidationUtils.validateNotEmpty(model, "Modellbezeichnung");
         this.model = model;
     }
 
-    /**
-     * Gibt die Passagierkapazität des Flugzeugtyps zurück.
-     *
-     * @return Passagierkapazität
-     */
     public int getPaxCapacity() {
         return paxCapacity;
     }
 
-    /**
-     * Setzt die Passagierkapazität des Flugzeugtyps.
-     *
-     * @param paxCapacity Die neue Passagierkapazität
-     * @throws IllegalArgumentException wenn die Kapazität nicht positiv ist
-     */
     public void setPaxCapacity(int paxCapacity) {
         ValidationUtils.validatePositive(paxCapacity, "Passagierkapazität");
         this.paxCapacity = paxCapacity;
     }
 
-    /**
-     * Gibt die Frachtkapazität des Flugzeugtyps zurück.
-     *
-     * @return Frachtkapazität in kg
-     */
     public double getCargoCapacity() {
         return cargoCapacity;
     }
 
-    /**
-     * Setzt die Frachtkapazität des Flugzeugtyps.
-     *
-     * @param cargoCapacity Die neue Frachtkapazität in kg
-     * @throws IllegalArgumentException wenn die Kapazität negativ ist
-     */
     public void setCargoCapacity(double cargoCapacity) {
         ValidationUtils.validateNotNegative(cargoCapacity, "Frachtkapazität");
         this.cargoCapacity = cargoCapacity;
     }
 
-    /**
-     * Gibt die maximale Reichweite des Flugzeugtyps zurück.
-     *
-     * @return Maximale Reichweite in km
-     */
     public double getMaxRangeKm() {
         return maxRangeKm;
     }
 
-    /**
-     * Setzt die maximale Reichweite des Flugzeugtyps.
-     *
-     * @param maxRangeKm Die neue maximale Reichweite in km
-     * @throws IllegalArgumentException wenn die Reichweite nicht positiv ist
-     */
     public void setMaxRangeKm(double maxRangeKm) {
         ValidationUtils.validatePositive(maxRangeKm, "Reichweite");
         this.maxRangeKm = maxRangeKm;
     }
 
-    /**
-     * Gibt die Reisegeschwindigkeit des Flugzeugtyps zurück.
-     *
-     * @return Reisegeschwindigkeit in km/h
-     */
     public double getSpeedKmh() {
         return speedKmh;
     }
 
-    /**
-     * Setzt die Reisegeschwindigkeit des Flugzeugtyps.
-     *
-     * @param speedKmh Die neue Reisegeschwindigkeit in km/h
-     * @throws IllegalArgumentException wenn die Geschwindigkeit nicht positiv ist
-     */
     public void setSpeedKmh(double speedKmh) {
         ValidationUtils.validatePositive(speedKmh, "Geschwindigkeit");
         this.speedKmh = speedKmh;
     }
 
-    /**
-     * Gibt die Betriebskosten pro Flugstunde zurück.
-     *
-     * @return Kosten pro Stunde in definierter Währung (z.B. Euro)
-     */
     public double getCostPerHour() {
         return costPerHour;
     }
 
-    /**
-     * Setzt die Betriebskosten pro Flugstunde.
-     *
-     * @param costPerHour Kosten pro Stunde
-     * @throws IllegalArgumentException wenn die Kosten negativ sind
-     */
     public void setCostPerHour(double costPerHour) {
         ValidationUtils.validateNotNegative(costPerHour, "Kosten pro Stunde");
         this.costPerHour = costPerHour;
     }
 
-    /**
-     * Gibt eine vollständige Bezeichnung des Flugzeugtyps zurück.
-     *
-     * @return Formatierte Bezeichnung: "Hersteller Modell"
-     */
     public String getFullName() {
         return (manufacturer != null ? manufacturer.getName() : "Unbekannt") + " " + model;
     }

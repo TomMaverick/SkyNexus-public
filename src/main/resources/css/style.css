@@ -1,0 +1,803 @@
+/* Farbpalette und Basisvariablen */
+.root {
+    -fx-primary-dark: #251f3f;
+    -fx-primary-light: #3a2b5e;
+    -fx-secondary: #464646;
+    -fx-secondary-light: #5a5a5a;
+    -fx-secondary-dark: #3c3c3c;
+    -fx-accent-blue: #3498db;
+    -fx-accent-blue-dark: #2980b9;
+    -fx-accent-purple-dark: #2f133c;
+    -fx-light-text: #f0f0f0;
+    -fx-dark-text: #2d2d2d;
+    -fx-hover-light: #f0f0f0;
+    -fx-hover-dark: #d6d6d6;
+    -fx-active-light: #a0a0a0;
+    -fx-active-dark: #868686;
+    -fx-transparent-light: rgba(255, 255, 255, 0.2);
+    -fx-transparent-heavy: rgba(255, 255, 255, 0.4);
+    -fx-dashboard-card-bg: derive(-fx-secondary, 20%);
+    -fx-dashboard-text: -fx-light-text;
+    -fx-dashboard-header-bg: linear-gradient(to bottom, -fx-primary-dark, -fx-primary-light);
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-background-color: transparent;
+    -fx-shadow-color: rgba(0, 0, 0, 0.3);
+    -fx-shadow-small: dropshadow(three-pass-box, -fx-shadow-color, 4, 0, 0, 1);
+    -fx-shadow-medium: dropshadow(three-pass-box, -fx-shadow-color, 6, 0, 0, 2);
+    -fx-shadow-large: dropshadow(three-pass-box, -fx-shadow-color, 8, 0, 0, 3);
+}
+
+/* Button-System */
+.btn {
+    -fx-text-fill: -fx-light-text;
+    -fx-font-weight: bold;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+.btn-primary {
+    -fx-background-color: -fx-primary-light;
+    -fx-border-color: derive(-fx-primary-light, -10%);
+}
+
+.btn-primary:hover {
+    -fx-background-color: derive(-fx-primary-light, 10%);
+}
+
+.btn-secondary {
+    -fx-background-color: -fx-secondary;
+    -fx-border-color: derive(-fx-secondary, -10%);
+}
+
+.btn-secondary:hover {
+    -fx-background-color: derive(-fx-secondary, 10%);
+}
+
+.btn-transparent {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.btn-transparent:hover {
+    -fx-background-color: -fx-transparent-light;
+}
+
+.btn-danger {
+    -fx-background-color: #e74c3c;
+    -fx-border-color: #c0392b;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-rounded {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.btn-small {
+    -fx-padding: 4px 6px;
+    -fx-font-size: 12px;
+}
+
+.btn-medium {
+    -fx-padding: 6px 6px;
+    -fx-font-size: 14px;
+}
+
+.btn-large {
+    -fx-padding: 8px 6px;
+    -fx-font-size: 16px;
+}
+
+/* Icon-System */
+.icon-base {
+    -fx-opacity: 0.9;
+    -fx-cursor: default;
+}
+
+.icon-md {
+    -fx-icon-size: 24px;
+}
+
+.icon-lg {
+    -fx-icon-size: 32px;
+}
+
+.icon-accent {
+    -fx-fill: -fx-accent-blue;
+}
+
+.icon-light {
+    -fx-fill: -fx-light-text;
+}
+
+.icon-danger {
+    -fx-fill: #e74c3c;
+}
+
+.icon-success {
+    -fx-fill: #2ecc71;
+}
+
+.icon-warning {
+    -fx-fill: #f39c12;
+}
+
+.icon-interactive {
+    -fx-cursor: hand;
+}
+
+.icon-interactive:hover {
+    -fx-opacity: 0.8;
+}
+
+/* Strukturelemente - explizite Hintergrundfarbe für korrekte border-radius-Darstellung */
+.main-window {
+    -fx-background-color: #464646;
+    -fx-background-radius: 20px;
+}
+
+.header {
+    -fx-background-color: linear-gradient(to right, #251f3f, #3a2b5e);
+    -fx-padding: 10px;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-radius: 20 20 0 0;
+    -fx-background-radius: 20 20 0 0;
+}
+
+/* Footer mit korrektem Radius - Anpassung für einheitliche Ecken */
+.footer {
+    -fx-background-color: -fx-dark-text;
+    -fx-padding: 5px;
+    -fx-border-color: black;
+    -fx-border-width: 2px 0 0 0;
+    -fx-border-radius: 0 0 20 20;
+    -fx-background-radius: 0 0 20 20;
+}
+
+.footer Label {
+    -fx-text-fill: -fx-light-text;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.sidebar {
+    -fx-min-width: 200px;
+    -fx-pref-width: 20%;
+    -fx-max-width: 400px;
+    -fx-background-color: -fx-secondary;
+    -fx-padding: 12px;
+    -fx-border-color: black;
+    -fx-border-width: 0 2px 0 0;
+}
+
+.content-area {
+    -fx-background-color: derive(-fx-secondary-dark, -10%);
+    -fx-padding: 0;
+}
+
+/* Steuerelemente */
+.window-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-light-text;
+    -fx-font-size: 20px;
+}
+
+.window-button:hover {
+    -fx-background-color: -fx-transparent-light;
+}
+
+.sidebar .button {
+    -fx-background-color: linear-gradient(to bottom, -fx-secondary-light, -fx-secondary-dark);
+    -fx-text-fill: -fx-light-text;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
+    -fx-min-width: 180px;
+}
+
+.sidebar .button:hover {
+    -fx-background-color: linear-gradient(to bottom, -fx-hover-light, -fx-hover-dark);
+    -fx-text-fill: -fx-dark-text;
+}
+
+.sidebar .active {
+    -fx-background-color: linear-gradient(to bottom, -fx-active-light, -fx-active-dark);
+    -fx-text-fill: white;
+}
+
+.read-only-field {
+    -fx-background-color: #f0f0f0;
+    -fx-opacity: 0.9;
+    -fx-text-fill: #404040;
+    -fx-cursor: default;
+}
+
+.read-only-field:focused {
+    -fx-background-color: #e8e8e8;
+    -fx-border-color: #d0d0d0;
+}
+
+/* Labels und Textformatierung */
+.section-title {
+    -fx-text-fill: -fx-dark-text;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 0;
+}
+
+.content-area-label {
+    -fx-text-fill: #a5a5a5;
+    -fx-font-size: 200px;
+}
+
+.admin-header {
+    -fx-text-fill: #ff3333;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 5px 0;
+    -fx-alignment: center;
+}
+
+.status {
+    -fx-text-fill: #aaffaa;
+}
+
+.time {
+    -fx-text-fill: -fx-light-text;
+}
+
+.copyright {
+    -fx-text-fill: -fx-light-text;
+    -fx-opacity: 0.8;
+}
+
+.error-label {
+    -fx-text-fill: #ff5252;
+    -fx-font-weight: bold;
+}
+
+.hint-label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 0 5px 0 5px;
+}
+
+/* ========================================
+   DASHBOARD-ELEMENTE
+   ======================================== */
+/* Container und Layout */
+.dashboard-container {
+    -fx-background-color: derive(-fx-secondary-dark, -10%);
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+.dashboard-section {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 5px;
+    -fx-border-color: derive(-fx-secondary-light, -10%);
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-effect: -fx-shadow-large;
+}
+
+.dashboard-section-header {
+    -fx-background-color: -fx-dashboard-header-bg;
+    -fx-background-radius: 5px 5px 0 0;
+    -fx-effect: -fx-shadow-small;
+}
+
+/* Karten und Inhalte */
+.dashboard-card {
+    -fx-background-color: -fx-dashboard-card-bg;
+    -fx-background-radius: 5px;
+    -fx-effect: -fx-shadow-medium;
+    -fx-padding: 15px;
+    -fx-border-color: derive(-fx-secondary-light, 20%);
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.dashboard-card Label {
+    -fx-text-fill: -fx-light-text;
+}
+
+/* Fortschrittsanzeigen */
+.fleet-progress-bar .bar {
+    -fx-background-color: -fx-accent-blue;
+    -fx-background-radius: 3px;
+}
+
+.fleet-progress-bar .track {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 3px;
+}
+
+/* Text und Icons */
+.dashboard-title {
+    -fx-font-size: 18px;
+    -fx-text-fill: -fx-dashboard-text;
+    -fx-font-weight: bold;
+}
+
+/* Legacy-Icon-Kompatibilität */
+.dashboard-icon {
+    -fx-fill: -fx-accent-blue;
+}
+
+.dashboard-section-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.4), 2, 0, 0, 1);
+}
+
+/* ========================================
+   LOGIN-BEREICH
+   ======================================== */
+.login-window {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 8px;
+    -fx-border-color: #000000;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0, 0, 0);
+}
+
+/* Tabs */
+.login-window .tab-header-area {
+    -fx-background-color: transparent;
+    -fx-padding: 5px 5px 0px 5px;
+}
+
+.login-window .tab-header-area .tab-header-background {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-background-radius: 8px 8px 0px 0px;
+}
+
+.login-window .tab {
+    -fx-background-color: -fx-secondary-light;
+    -fx-background-radius: 6px 6px 0px 0px;
+    -fx-padding: 8px 15px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.login-window .tab .tab-label {
+    -fx-text-fill: -fx-light-text;
+    -fx-font-weight: bold;
+}
+
+.login-window .tab:selected {
+    -fx-background-color: -fx-primary-light;
+    -fx-background-insets: 0;
+}
+
+.login-window .tab-content-area {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 0px 0px 8px 8px;
+}
+
+/* Formulare */
+.auth-form {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 0px 0px 8px 8px;
+}
+
+.auth-form .text-field,
+.auth-form .password-field {
+    -fx-background-color: -fx-secondary-light;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: derive(-fx-light-text, -20%);
+    -fx-background-radius: 4px;
+    -fx-border-color: #000000;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px;
+}
+
+.auth-form .primary-button {
+    -fx-background-color: -fx-primary-light;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+}
+
+.auth-form .primary-button:hover {
+    -fx-background-color: -fx-accent-purple-dark;
+}
+
+.countryCodeField {
+    -fx-background-color: #dddddd;
+    -fx-font-weight: bold;
+    -fx-border-radius: 4 0 0 4;
+    -fx-background-radius: 4 0 0 4;
+    -fx-alignment: center;
+}
+
+.passportNumberField {
+    -fx-border-radius: 0 4 4 0;
+    -fx-background-radius: 0 4 4 0;
+}
+
+/* ComboBox */
+.auth-form .combo-box {
+    -fx-background-color: -fx-secondary-light;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: white;
+    -fx-background-radius: 4px;
+    -fx-border-color: #000000;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-padding: 2px;
+}
+
+.auth-form .combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 6px;
+}
+
+.auth-form .combo-box .list-cell:filled:selected {
+    -fx-background-color: transparent;
+}
+
+.auth-form .combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.auth-form .combo-box .arrow {
+    -fx-background-color: white;
+}
+
+.auth-form .combo-box-popup .list-view {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+.auth-form .combo-box-popup .list-cell {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-text-fill: white;
+    -fx-padding: 6px;
+}
+
+.auth-form .combo-box-popup .list-cell:hover {
+    -fx-background-color: -fx-primary-light;
+}
+
+.auth-form .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -fx-accent-purple-dark;
+}
+
+.label.db-status-connected .ikonli-font-icon {
+    -fx-fill: green; /* Oder deine gewünschte Farbe */
+}
+.label.db-status-disconnected .ikonli-font-icon {
+    -fx-fill: red;
+}
+.label.db-status-connecting .ikonli-font-icon {
+    -fx-fill: orange;
+}
+
+/* ========================================
+   ERGÄNZUNGEN FÜR FIRST RUN SETUP VIEW
+   ======================================== */
+
+/* Container für die gesamte Setup-Ansicht */
+.setup-container {
+    -fx-background-color: derive(-fx-secondary-dark, -10%); /* Dunkler Hintergrund wie content-area */
+    /* Padding wird jetzt direkt in FXML gesetzt */
+}
+
+/* Header-Bereich der Setup-Ansicht */
+.setup-header {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 5px 0; /* Kleiner Abstand nach unten */
+}
+
+/* Icon im Setup-Header */
+.setup-header-icon {
+    /* Verwendet icon-base, icon-lg, icon-accent direkt in FXML */
+}
+
+/* Titel im Setup-Header */
+.setup-header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-light-text;
+    -fx-padding: 0 0 0 10px; /* Abstand zum Icon */
+}
+
+/* Beschreibungstext unter dem Header */
+.setup-description {
+    -fx-text-fill: derive(-fx-light-text, -10%); /* Etwas gedimmtes helles Grau */
+    -fx-font-size: 14px;
+    -fx-padding: 5px 0 15px 0; /* Abstand oben/unten */
+}
+
+/* Container für einen Einstellungsabschnitt (Flughafen/Airline) */
+.setup-section {
+    -fx-padding: 10px 0 0 0; /* Abstand oben */
+}
+
+/* Titel eines Einstellungsabschnitts */
+.setup-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-light-text;
+    -fx-padding: 0 0 5px 0; /* Kleiner Abstand nach unten */
+}
+
+/* Trennlinie unter dem Abschnittstitel */
+.setup-separator .line { /* Target the actual line within the Separator */
+    -fx-border-color: -fx-secondary-light; /* Farbe der Linie */
+    -fx-border-width: 1px 0 0 0; /* Nur obere Linie */
+}
+
+.setup-separator {
+    -fx-padding: 5px 0 10px 0; /* Abstand oben/unten um die Linie */
+}
+
+
+/* Grid für die Eingabefelder */
+.setup-grid {
+    -fx-hgap: 15px;
+    -fx-vgap: 10px;
+    -fx-padding: 5px 0 0 0; /* Kleiner Abstand nach oben */
+}
+
+/* Labels in der Grid */
+.setup-label {
+    -fx-text-fill: -fx-light-text;
+    -fx-font-size: 13px;
+    -fx-padding: 5px 0 0 0; /* Leichte Anpassung für vertikale Zentrierung zum Feld */
+}
+
+/* Hyperlink Stil */
+.setup-link {
+    -fx-font-size: 12px; /* Etwas kleiner */
+    -fx-text-fill: -fx-accent-blue; /* Standard Link Farbe */
+    -fx-border-color: transparent; /* Kein Unterstrich standardmäßig */
+}
+.setup-link:hover {
+    -fx-underline: true;
+    -fx-text-fill: derive(-fx-accent-blue, 20%);
+}
+.setup-link:visited {
+    -fx-text-fill: -fx-accent-blue;
+}
+
+
+/* Textfelder in der Grid */
+.setup-text-field {
+    -fx-background-color: -fx-secondary-light;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: derive(-fx-light-text, -30%); /* Etwas dunklerer Prompt-Text */
+    -fx-background-radius: 4px;
+    -fx-border-color: derive(-fx-secondary-light, -20%); /* Dunklerer Rand */
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 10px; /* Etwas mehr Padding */
+    -fx-font-size: 13px;
+}
+
+.setup-text-field:focused {
+    -fx-border-color: -fx-accent-blue;
+    -fx-background-color: derive(-fx-secondary-light, 5%); /* Leichte Aufhellung bei Fokus */
+}
+
+/* ComboBox Styling (adaptiert von .auth-form .combo-box) */
+.setup-combobox {
+    -fx-background-color: -fx-secondary-light;
+    -fx-text-fill: white; /* Wird durch ListCell überschrieben */
+    -fx-prompt-text-fill: derive(-fx-light-text, -30%);
+    -fx-background-radius: 4px;
+    -fx-border-color: derive(-fx-secondary-light, -20%);
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-padding: 0px; /* Padding wird durch list-cell gesteuert */
+    -fx-font-size: 13px;
+}
+
+.setup-combobox:focused {
+    -fx-border-color: -fx-accent-blue;
+}
+
+/* Zelle in der geschlossenen ComboBox */
+.setup-combobox .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 8px 10px; /* Gleiches Padding wie Textfeld */
+}
+
+/* Pfeil-Button */
+.setup-combobox .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8px 0 0; /* Abstand rechts */
+}
+
+.setup-combobox .arrow {
+    -fx-background-color: -fx-light-text; /* Pfeil-Farbe */
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+/* Aufklappliste */
+.setup-combobox .combo-box-popup .list-view {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+}
+
+/* Zellen in der Aufklappliste */
+.setup-combobox .combo-box-popup .list-cell {
+    -fx-background-color: -fx-secondary-dark;
+    -fx-text-fill: white;
+    -fx-padding: 6px 10px;
+    -fx-font-size: 13px;
+}
+
+.setup-combobox .combo-box-popup .list-cell:hover {
+    -fx-background-color: -fx-primary-light; /* Hover-Farbe */
+}
+
+.setup-combobox .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -fx-accent-purple-dark; /* Auswahl-Farbe */
+}
+
+
+/* Status-Label Anpassungen */
+.status-label { /* Basis-Stil für das Status-Label (jetzt im Button-Bereich) */
+    -fx-font-size: 13px;
+    -fx-padding: 0 5px 0 0; /* Rechter Abstand zum Button */
+    -fx-alignment: CENTER_LEFT;
+}
+
+.status-message { /* Für neutrale Nachrichten "Speichere..." */
+    -fx-text-fill: -fx-light-text;
+    -fx-font-style: italic;
+}
+
+.success-label { /* Für Erfolg */
+    -fx-text-fill: #2ecc71; /* Grün */
+    -fx-font-weight: bold;
+}
+
+.error-label { /* Für Fehler (im separaten Label) */
+    -fx-text-fill: #ff5252; /* Rot */
+    -fx-font-weight: normal; /* Nicht fett, um nicht zu dominant zu sein */
+    -fx-font-size: 13px;
+    -fx-padding: 0 5px 0 0;
+}
+
+
+/* Anpassung für den Button-Bereich */
+.setup-button-pane {
+    -fx-padding: 10px 0 0 0; /* Abstand nach oben */
+}
+
+/* ========================================
+   LOGS VIEW FIXES
+   ======================================== */
+/* Fix for CSS variable resolution issues in LogsView */
+
+/* LogsView Root mit expliziter transparenter Hintergrundfarbe */
+.logs-view-root {
+    -fx-background-color: #00000000; /* Vollständig transparent */
+}
+
+/* LogsView Main Window - MUSS transparent sein für Ecken-Transparenz */
+.logs-view-root .main-window {
+    -fx-background-color: #00000000; /* Vollständig transparent */
+    -fx-background-radius: 20px;
+}
+
+/* Header with rounded top corners */
+.logs-view-root .header {
+    -fx-background-color: linear-gradient(to right, #251f3f, #3a2b5e);
+    -fx-background-radius: 20 20 0 0;
+    -fx-border-radius: 20 20 0 0;
+}
+
+/* LogsView spezifische Überschreibungen */
+.logs-view-root .btn {
+    -fx-text-fill: #f0f0f0;
+}
+
+.logs-view-root .dashboard-title {
+    -fx-text-fill: #f0f0f0;
+}
+
+.logs-view-root .dashboard-card Label {
+    -fx-text-fill: #f0f0f0;
+}
+
+.logs-view-root .table-view .table-cell {
+    -fx-text-fill: #f0f0f0;
+}
+
+/* LogsView Dashboard-Section mit korrekten Ecken */
+.logs-view-root .dashboard-section {
+    -fx-background-color: #464646;
+    -fx-border-color: #5a5a5a;
+    -fx-background-radius: 0 0 20 20;
+    -fx-border-radius: 0 0 20 20;
+    -fx-effect: none;
+}
+
+.logs-view-root .dashboard-card {
+    -fx-background-color: #5a5a5a;
+    -fx-border-color: #6a6a6a;
+    -fx-effect: none;
+}
+
+.logs-view-root .btn-transparent:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Weitere kritische Container transparent machen */
+.logs-view-root .dashboard-container {
+    -fx-background-color: #00000000;
+}
+
+/* Table Styles Fix */
+.logs-view-root .table-view {
+    -fx-background-color: #464646;
+    -fx-border-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .table-row-cell {
+    -fx-background-color: #464646;
+}
+
+.logs-view-root .table-view .table-row-cell:odd {
+    -fx-background-color: #3c3c3c;
+}
+
+.logs-view-root .table-view .table-row-cell:hover {
+    -fx-background-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .table-row-cell:hover:odd {
+    -fx-background-color: #505050;
+}
+
+/* Scrollbar Fix */
+.logs-view-root .table-view .scroll-bar .thumb {
+    -fx-background-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .scroll-bar .increment-arrow {
+    -fx-background-color: transparent;
+}
+
+.logs-view-root .table-view .scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+}
+
+/* Column Header Fix */
+.logs-view-root .table-view .column-header {
+    -fx-border-color: #5a5a5a;
+}
+
+.logs-view-root .table-view .column-header-background {
+    -fx-background-color: #464646;
+}

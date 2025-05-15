@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<!--suppress ALL -->
+<DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skynexus.controller.dialogs.FlightDialogController">
+    <content>
+         <GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="830.0" vgap="8.0">
+             <padding>
+                 <Insets left="10.0" right="10.0" top="10.0" />
+             </padding>
+
+             <!-- Flugdaten -->
+             <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Flugdaten" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+             <Label fx:id="flightNumberErrorLabel" text="Flight Nr Error Label" textFill="RED" visible="false" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                <GridPane.margin>
+                   <Insets />
+                </GridPane.margin>
+             </Label>
+
+             <Label text="Flugnummer:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+             <TextField fx:id="flightNumberField" maxWidth="100.0" promptText="z.B. DLH420" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+             <!-- Routeninformationen -->
+             <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Routeninformationen" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+
+             <Label text="Abflughafen:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+             <ComboBox fx:id="departureAirportComboBox" maxWidth="Infinity" promptText="Flughafen auswählen" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+             <Label text="Zielflughafen:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+             <ComboBox fx:id="arrivalAirportComboBox" maxWidth="Infinity" promptText="Flughafen auswählen" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+             <Label fx:id="routeDistanceLabel" text="Distanz: -" GridPane.rowIndex="6" />
+             <Label fx:id="routeTimeLabel" text="Flugzeit: -" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                   <Label fx:id="routeInfoLabel" text="Route Info Label" visible="false" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="TOP" />
+
+             <!-- Flugzeugdetails -->
+             <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Flugzeugdetails" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+             <Label fx:id="aircraftErrorLabel" text="Aircraft Error Label" textFill="RED" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+             <Label text="Flugzeug:" GridPane.columnIndex="0" GridPane.rowIndex="9">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin></Label>
+             <ComboBox fx:id="aircraftComboBox" maxWidth="Infinity" promptText="Flugzeug auswählen" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+             <Label text="Passagierkapazität:" GridPane.rowIndex="10">
+                <GridPane.margin>
+                   <Insets right="5.0" />
+                </GridPane.margin>
+             </Label>
+         <Label fx:id="aircraftPaxCapacityLabel" text=" -" GridPane.columnIndex="1" GridPane.rowIndex="10">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+         </Label>
+             <Label text="Frachtkapazität:" GridPane.rowIndex="11">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin></Label>
+         <Label fx:id="aircraftCargoCapacityLabel" text=" -" GridPane.columnIndex="1" GridPane.rowIndex="11">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+         </Label>
+             <Label text="Reichweite:" GridPane.rowIndex="12">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin></Label>
+         <Label fx:id="aircraftRangeLabel" text=" -" GridPane.columnIndex="1" GridPane.rowIndex="12">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+         </Label>
+             <Label text="Geschwindigkeit:" GridPane.rowIndex="13">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin></Label>
+         <Label fx:id="aircraftSpeedLabel" text=" -" GridPane.columnIndex="1" GridPane.rowIndex="13">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+         </Label>
+             <Label text="Betriebskosten/h:" GridPane.rowIndex="14">
+            <GridPane.margin>
+               <Insets right="5.0" />
+            </GridPane.margin></Label>
+         <Label fx:id="aircraftCostPerHourLabel" text=" -" GridPane.columnIndex="1" GridPane.rowIndex="14">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin>
+         </Label>
+
+             <!-- Datum und Uhrzeit Bereich -->
+             <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Datum und Uhrzeit" GridPane.columnIndex="3" GridPane.columnSpan="2" />
+
+             <!-- Zeitplanung -->
+             <Label text="Abflugdatum / Zeit:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+             <HBox GridPane.columnIndex="4" GridPane.rowIndex="1">
+                <DatePicker fx:id="departureDatePicker" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" promptText="00/00/0000" />
+                <Spinner fx:id="departureHourSpinner" editable="true" maxWidth="60.0" minWidth="60.0" prefWidth="60.0">
+                   <HBox.margin>
+                      <Insets left="20.0" />
+                   </HBox.margin>
+                </Spinner>
+                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="4.0" minWidth="4.0" prefWidth="4.0" text=":">
+                   <HBox.margin>
+                      <Insets left="3.0" right="3.0" />
+                   </HBox.margin>
+                </Label>
+                <Spinner fx:id="departureMinuteSpinner" editable="true" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+             </HBox>
+
+             <Label text="Ankunft: " GridPane.columnIndex="3" GridPane.rowIndex="2" />
+             <Label fx:id="arrivalDateTimeLabel" text="Wird berechnet..." GridPane.columnIndex="4" GridPane.rowIndex="2">
+            <GridPane.margin>
+               <Insets left="5.0" />
+            </GridPane.margin></Label>
+
+             <!-- Rückflug -->
+             <CheckBox fx:id="createReturnFlightCheck" selected="true" text="Automatisch Rückflug erstellen" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                <GridPane.margin>
+                   <Insets left="20.0" />
+                </GridPane.margin>
+             </CheckBox>
+
+             <Label text="Turnaround-Zeit:" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+             <HBox spacing="5" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                <children>
+                    <Spinner fx:id="turnaroundHoursSpinner" editable="true" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                    <Label text="h" />
+                    <Spinner fx:id="turnaroundMinutesSpinner" editable="true" maxWidth="60.0" minWidth="60.0" prefWidth="60.0">
+                       <HBox.margin>
+                          <Insets left="10.0" />
+                       </HBox.margin>
+                    </Spinner>
+                    <Label text="min" />
+                </children>
+             </HBox>
+
+             <Label fx:id="returnFlightInfoLabel" text="Return Flight Info Label" visible="false" wrapText="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+
+             <!-- Preise -->
+             <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Preise" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="6">
+                <GridPane.margin>
+                   <Insets />
+                </GridPane.margin>
+             </Label>
+
+             <Label text="Economy:" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+             <TextField fx:id="priceEconomyField" maxWidth="100.0" promptText="Economy-Preis" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+
+             <Label text="Business:" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+             <TextField fx:id="priceBusinessField" maxWidth="100.0" promptText="Business-Preis" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+
+             <Label text="First Class:" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+             <TextField fx:id="priceFirstField" maxWidth="100.0" promptText="First-Class-Preis" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+
+             <columnConstraints>
+                 <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="120.0" />
+                 <ColumnConstraints hgrow="ALWAYS" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="120.0" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="280.0" />
+             </columnConstraints>
+             <rowConstraints>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="23.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="15.0" />
+             </rowConstraints>
+         </GridPane>
+    </content>
+    <buttonTypes>
+        <ButtonType fx:constant="OK" />
+        <ButtonType fx:constant="CANCEL" />
+    </buttonTypes>
+</DialogPane>

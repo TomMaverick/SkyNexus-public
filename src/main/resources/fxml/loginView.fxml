@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skynexus.controller.LoginViewController">
+  <BorderPane>
+    <center>
+      <VBox alignment="CENTER" maxWidth="450.0" spacing="20.0">
+        <padding>
+          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        </padding>
+
+        <TabPane fx:id="authTabPane" styleClass="login-window" tabClosingPolicy="UNAVAILABLE">
+          <Tab fx:id="loginTab" text="Anmelden">
+            <VBox spacing="15.0" styleClass="auth-form">
+              <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+              </padding>
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="mdi-account" styleClass="icon-base, icon-md, icon-light" />
+                <TextField fx:id="loginUsernameField" promptText="Benutzername" text="admin" HBox.hgrow="ALWAYS" />
+              </HBox>
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="mdi-key" styleClass="icon-base, icon-md, icon-light" />
+                <PasswordField fx:id="loginPasswordField" promptText="Passwort" text="admin123" HBox.hgrow="ALWAYS" />
+              </HBox>
+              <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" styleClass="btn, btn-primary, btn-square, btn-medium" text="Anmelden">
+                <graphic>
+                  <FontIcon iconLiteral="mdi-login" styleClass="icon-base, icon-sm, icon-light" />
+                </graphic>
+              </Button>
+              <Label fx:id="loginErrorLabel" styleClass="error-label" text="Fehlerhafte Anmeldedaten" visible="false" />
+            </VBox>
+          </Tab>
+          <Tab fx:id="registerTab" text="Registrieren">
+            <VBox spacing="10.0" styleClass="auth-form">
+              <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+              </padding>
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="mdi-account" styleClass="icon-base, icon-md, icon-light" />
+                <TextField fx:id="registerUsernameField" promptText="Benutzername" HBox.hgrow="ALWAYS" />
+              </HBox>
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="mdi-lock" styleClass="icon-base, icon-md, icon-light" />
+                <PasswordField fx:id="registerPasswordField" promptText="Passwort" HBox.hgrow="ALWAYS" />
+              </HBox>
+              <HBox alignment="CENTER_LEFT" spacing="10">
+                <FontIcon iconLiteral="mdi-lock-outline" styleClass="icon-base, icon-md, icon-light" />
+                <PasswordField fx:id="registerPasswordConfirmField" promptText="Passwort bestätigen" HBox.hgrow="ALWAYS" />
+              </HBox>
+
+              <HBox spacing="10">
+                <FontIcon iconLiteral="mdi-information" styleClass="icon-base, icon-md, icon-warning" />
+                <Label alignment="TOP_LEFT" prefHeight="60.0" styleClass="hint-label" text="Das Passwort muss mindestens 8 Zeichen, Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen enthalten" wrapText="true" HBox.hgrow="ALWAYS" />
+              </HBox>
+              <Button fx:id="registerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" styleClass="btn, btn-primary, btn-square, btn-medium" text="Registrieren">
+                <graphic>
+                  <FontIcon iconLiteral="mdi-account-plus" styleClass="icon-base, icon-sm, icon-light" />
+                </graphic>
+              </Button>
+              <Label fx:id="registerErrorLabel" styleClass="error-label" text="Fehler bei der Registrierung" visible="false" wrapText="true" />
+            </VBox>
+          </Tab>
+        </TabPane>
+      </VBox>
+    </center>
+    <bottom>
+      <HBox alignment="CENTER" spacing="10.0" styleClass="status-bar">
+        <padding>
+          <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+        </padding>
+      </HBox>
+    </bottom>
+  </BorderPane>
+</StackPane>

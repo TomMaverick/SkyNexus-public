@@ -1,58 +1,48 @@
 package skynexus.model;
 
+import skynexus.util.TimeUtils;
 import skynexus.util.ValidationUtils;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
- * Repräsentiert einen Benutzer des Systems mit seinen Zugangsdaten
- * und optionalen Zuordnungen zu Flughafen und Airline.
+ * Repräsentiert einen Benutzer des Systems mit seinen Zugangsdaten.
+ * Speichert Authentifizierungsinformationen sowie Berechtigungen und
+ * Zuordnungen zu Flughafen und Airline.
  */
 public class User {
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-    private Long id;                     // Primärschlüssel in der Datenbank
-    private String username;             // Benutzername, z.B. "admin"
-    private String passwordHash;         // Passwort-Hash (PBKDF2)
-    private String salt;                 // Salt für Passwort-Hashing
-    private Airport airport;             // Zugeordneter Flughafen
-    private Airline airline;             // Zugeordnete Airline
-    private LocalDateTime lastLogin;     // Zeitpunkt des letzten Logins
-    private LocalDateTime createdAt;     // Erstellungszeitpunkt
-    private boolean active;              // Ist der Benutzer aktiv?
-    private boolean admin;               // Hat der Benutzer Admin-Rechte?
+    private Long id;
+    private String username;
+    private String passwordHash;
+    private String salt;
+
+    private LocalDateTime lastLogin;
+    private LocalDateTime createdAt;
+    private boolean active;
+    private boolean admin;
 
     /**
-     * Standard-Konstruktor mit Standardwerten
+     * Erstellt einen neuen Benutzer mit Standardwerten.
+     * Der Benutzer wird aktiv gesetzt, hat keine Administratorrechte
+     * und der Erstellungszeitpunkt wird auf die aktuelle Zeit gesetzt.
      */
     public User() {
         this.createdAt = LocalDateTime.now();
         this.active = true;
-        this.admin = false; // Standardmäßig kein Admin
+        this.admin = false;
     }
 
     /**
-     * Konstruktor mit Benutzernamen
+     * Erstellt einen neuen Benutzer mit dem angegebenen Benutzernamen.
      *
-     * @param username Benutzername
+     * @param username Der Benutzername, mindestens 3 Zeichen lang
+     * @throws IllegalArgumentException wenn der Benutzername weniger als 3 Zeichen hat
      */
     public User(String username) {
         this();
-        validateUsername(username);
-        this.setUsername(username);
+        setUsername(username);
     }
 
-    /**
-     * Validiert den Benutzernamen auf Mindestlänge
-     */
-    private void validateUsername(String username) {
-        if (username.length() < 3) {
-            throw new IllegalArgumentException("Benutzername muss mindestens 3 Zeichen lang sein");
-        }
-    }
-
-    // Getters und Setters mit zentraler Validierung
     public Long getId() {
         return this.id;
     }
@@ -67,7 +57,7 @@ public class User {
 
     public void setUsername(String username) {
         ValidationUtils.validateNotEmpty(username, "Benutzername");
-        validateUsername(username);
+        ValidationUtils.validateUsernameLength(username);
         this.username = username;
     }
 
@@ -86,26 +76,6 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public Airport getAirport() {
-        return this.airport;
-    }
-
-    public void setAirport(Airport airport) {
-        this.airport = airport;
-    }
-
-    public Airline getAirline() {
-        return this.airline;
-    }
-
-    public void setAirline(Airline airline) {
-        this.airline = airline;
-    }
-
-    public LocalDateTime getLastLogin() {
-        return this.lastLogin;
     }
 
     public void setLastLogin(LocalDateTime lastLogin) {
@@ -138,36 +108,31 @@ public class User {
     }
 
     /**
-     * Formatierte Darstellung mit optionaler Airline/Airport Information
-     * und verhindert NPEs, wenn diese nicht gesetzt sind
+     * Erstellt eine String-Repräsentation des Benutzers mit optionalen
+     * Informationen zu Administratorstatus.
+     *
+     * @return Die formatierte Benutzerdarstellung
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(this.username);
-        if (this.admin) sb.append(" (Admin)");
-
-        if (this.airline != null || this.airport != null) {
-            sb.append(" (");
-            if (this.airline != null) sb.append(this.airline.getName());
-            if (this.airline != null && this.airport != null) sb.append(" @ ");
-            if (this.airport != null) sb.append(this.airport.getName());
-            sb.append(")");
-        }
-
-        return sb.toString();
+        return this.username + (this.admin ? " (Admin)" : "");
     }
 
     /**
-     * @return Formatiertes Erstellungsdatum
+     * Formatiert das Erstellungsdatum des Benutzers.
+     *
+     * @return Das formatierte Erstellungsdatum im Format "dd.MM.yyyy HH:mm"
      */
     public String getFormattedCreationDate() {
-        return this.createdAt.format(DATE_FORMATTER);
+        return TimeUtils.formatStandardDateTime(this.createdAt, "");
     }
 
     /**
-     * @return Formatiertes letztes Login-Datum oder "Nie" wenn null
+     * Formatiert den Zeitpunkt des letzten Logins.
+     *
+     * @return Das formatierte Datum des letzten Logins oder "Nie" wenn nie eingeloggt
      */
     public String getFormattedLastLogin() {
-        return this.lastLogin != null ? this.lastLogin.format(DATE_FORMATTER) : "Nie";
+        return TimeUtils.formatStandardDateTime(this.lastLogin, "Nie");
     }
 }

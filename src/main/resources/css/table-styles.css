@@ -1,0 +1,189 @@
+/* Tabellen-Styling für LogView mit expliziten Farbwerten */
+
+.table-view {
+    -fx-background-color: #5a5a5a;
+    -fx-border-color: #6a6a6a;
+    -fx-border-radius: 3px;
+    -fx-table-cell-border-color: #4f4f4f;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Spaltenüberschriften */
+.table-view .column-header-background {
+    -fx-background-color: #3a2b5e;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 8px 10px;
+    -fx-alignment: CENTER-LEFT;
+    -fx-border-color: #2f2654;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 5px;
+}
+
+/* Zeilen-Stile mit expliziten Werten */
+.table-view .table-row-cell {
+    -fx-background-color: #5a5a5a;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #505050;
+    -fx-background-insets: 0;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #505050;
+}
+
+.table-view .table-row-cell:hover,
+.table-view .table-row-cell:odd:hover {
+    -fx-background-color: #6a6a6a;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #3a2b5e;
+    -fx-table-cell-border-color: #2f2654;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+.table-view .table-row-cell:selected:hover {
+    -fx-background-color: #4a3b6e;
+}
+
+/* Zellen-Stile mit expliziten Werten */
+.table-view .table-cell {
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: transparent;
+    -fx-padding: 6px 10px;
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* Spaltenausrichtung */
+.left-aligned-column .table-cell {
+    -fx-alignment: CENTER-LEFT;
+}
+
+.center-aligned-column .table-cell {
+    -fx-alignment: CENTER;
+}
+
+.right-aligned-column .table-cell {
+    -fx-alignment: CENTER-RIGHT;
+}
+
+/* Scrollbar mit expliziten Werten */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar:vertical .thumb,
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #6a6a6a;
+    -fx-background-radius: 5;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover,
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #7a7a7a;
+}
+
+.table-view .scroll-bar:vertical .thumb:pressed,
+.table-view .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: #8a8a8a;
+}
+
+.table-view .scroll-bar .increment-button,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 2px;
+}
+
+.table-view .scroll-bar .increment-arrow,
+.table-view .scroll-bar .decrement-arrow {
+    -fx-background-color: #f0f0f0;
+    -fx-opacity: 0.7;
+    -fx-shape: " ";
+    -fx-padding: 4px;
+}
+
+/* Leere Tabellen mit expliziten Werten */
+.table-view:empty .placeholder {
+    -fx-background-color: #5a5a5a;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #f0f0f0;
+    -fx-font-style: italic;
+    -fx-opacity: 0.6;
+}
+
+/* Status-Anzeigen */
+.status-available {
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+}
+
+.status-maintenance {
+    -fx-text-fill: #f39c12;
+    -fx-font-weight: bold;
+}
+
+.status-grounded {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+.status-scheduled {
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+}
+
+.status-boarding {
+    -fx-text-fill: #9b59b6;
+    -fx-font-weight: bold;
+}
+
+.status-departed,
+.status-flying {
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+}
+
+.status-landed {
+    -fx-text-fill: #27ae60;
+    -fx-font-weight: bold;
+}
+
+.status-cancelled,
+.status-delayed {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+/* Benutzer-Stile */
+.admin-user-cell {
+    -fx-text-fill: #64b5f6 !important;
+    -fx-font-weight: bold !important;
+}
+
+.user-status-active {
+    -fx-text-fill: #66bb6a !important;
+    -fx-font-weight: bold !important;
+}
+
+.user-status-inactive {
+    -fx-text-fill: #ef5350 !important;
+    -fx-font-weight: bold !important;
+}

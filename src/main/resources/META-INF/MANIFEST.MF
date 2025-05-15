@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: skynexus.SkyNexus
+Class-Path: .
+Add-Opens: javafx.graphics/javafx.scene=ALL-UNNAMED
