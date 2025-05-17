@@ -581,6 +581,11 @@ public class PassengerDialogController {
         // Buchungen hinzufügen
         if (passenger.getBookings() != null) {
             bookings.addAll(passenger.getBookings());
+            
+            // Filter direkt nach dem Hinzufügen von Buchungen anwenden
+            if (showFutureFlights != null && showPastFlights != null) {
+                applyBookingFilters();
+            }
         }
 
         // Speichern-Button Update - Nutze den richtigen ButtonType
@@ -754,6 +759,12 @@ public class PassengerDialogController {
         // Listener für Filteränderungen
         showFutureFlights.selectedProperty().addListener((obs, old, val) -> applyBookingFilters());
         showPastFlights.selectedProperty().addListener((obs, old, val) -> applyBookingFilters());
+        
+        // Filter sofort anwenden, damit nur zukünftige Flüge zu Beginn sichtbar sind
+        Platform.runLater(this::applyBookingFilters);
+        
+        logger.debug("Buchungsfilter initialisiert: Zukünftige Flüge={}, Vergangene Flüge={}", 
+                    showFutureFlights.isSelected(), showPastFlights.isSelected());
     }
 
     /**
@@ -1014,19 +1025,35 @@ public class PassengerDialogController {
     }
 
     /**
-     * Formatiert die Anzeige eines Fluges.
+     * Formatiert die Anzeige eines Fluges mit vollständigen Routen- und Zeitinformationen.
+     * Format: "FLUGHAFEN → ZIELFLUGHAFEN (FLUGNR, KLASSE) - DATUM, ZEIT"
      */
     private String formatFlightDisplay(Flight flight) {
         if (flight == null) return "Kein Flug";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(flight.getFlightNumber());
+        
+        // Flughafen-Route hinzufügen (von → nach)
+        if (flight.getDepartureAirport() != null && flight.getArrivalAirport() != null) {
+            String depCity = flight.getDepartureAirport().getCity();
+            String arrCity = flight.getArrivalAirport().getCity();
+            
+            // Stadtname oder ICAO-Code verwenden
+            String depName = depCity != null && !depCity.isEmpty() ? depCity : flight.getDepartureAirport().getIcaoCode();
+            String arrName = arrCity != null && !arrCity.isEmpty() ? arrCity : flight.getArrivalAirport().getIcaoCode();
+            
+            sb.append(depName).append(" → ").append(arrName).append(" ");
+        }
+        
+        // Flugnummer in Klammern
+        sb.append("(").append(flight.getFlightNumber()).append(")");
 
+        // Datum und Zeit hinzufügen
         if (flight.getDepartureDate() != null) {
             sb.append(" - ").append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             if (flight.getDepartureTime() != null) {
-                sb.append(" - ").append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
+                sb.append(", ").append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
             }
         }
 
@@ -1034,7 +1061,8 @@ public class PassengerDialogController {
     }
 
     /**
-     * Formatiert die Anzeige einer Buchung.
+     * Formatiert die Anzeige einer Buchung mit Routen-, Klassen- und Zeitinformationen.
+     * Format: "FLUGHAFEN → ZIELFLUGHAFEN (FLUGNR, KLASSE) - DATUM, ZEIT"
      */
     private String formatBookingDisplay(Booking booking) {
         if (booking == null || booking.getFlight() == null) return "Ungültige Buchung";
@@ -1043,19 +1071,36 @@ public class PassengerDialogController {
         SeatClass seatClass = booking.getSeatClass();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(flight.getFlightNumber())
-                .append(" (")
-                .append(getSeatClassShortName(seatClass))
-                .append(")");
+        
+        // Flughafen-Route hinzufügen (von → nach)
+        if (flight.getDepartureAirport() != null && flight.getArrivalAirport() != null) {
+            String depCity = flight.getDepartureAirport().getCity();
+            String arrCity = flight.getArrivalAirport().getCity();
+            
+            // Stadtname oder ICAO-Code verwenden
+            String depName = depCity != null && !depCity.isEmpty() ? depCity : flight.getDepartureAirport().getIcaoCode();
+            String arrName = arrCity != null && !arrCity.isEmpty() ? arrCity : flight.getArrivalAirport().getIcaoCode();
+            
+            sb.append(depName).append(" → ").append(arrName).append(" ");
+        }
+        
+        // Flugnummer und Klasse in Klammern
+        sb.append("(").append(flight.getFlightNumber())
+          .append(", ").append(getSeatClassShortName(seatClass))
+          .append(")");
 
+        // Datum und Zeit hinzufügen
         if (flight.getDepartureDate() != null) {
-            sb.append(" - ")
-                    .append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            sb.append(" - ").append(flight.getDepartureDate().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
             if (flight.getDepartureTime() != null) {
-                sb.append(" - ")
-                        .append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
+                sb.append(", ").append(flight.getDepartureTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
             }
+        }
+        
+        // Status hinzufügen, falls nicht SCHEDULED
+        if (flight.getStatus() != null && flight.getStatus() != FlightStatus.SCHEDULED) {
+            sb.append(" - Status: ").append(flight.getStatus());
         }
 
         return sb.toString();

@@ -16,11 +16,12 @@
 <?import javafx.scene.layout.VBox?>
 
 <!--suppress ALL -->
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skynexus.controller.dialogs.PassengerDialogController">
+
+<VBox minWidth="550.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skynexus.controller.dialogs.PassengerDialogController">
    <children>
       <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
-          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="150.0" minWidth="130.0" prefWidth="130.0" />
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="250.0" />
         </columnConstraints>
         <rowConstraints>
@@ -45,8 +46,8 @@
             <Label text="Buchungen:" GridPane.rowIndex="7" />
             <HBox alignment="CENTER_LEFT" spacing="15.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <children>
-                  <CheckBox fx:id="showFutureFlights" text="Zukünftige" selected="true" />
-                  <CheckBox fx:id="showPastFlights" text="Vergangene" selected="false" />
+                  <CheckBox fx:id="showFutureFlights" selected="true" text="Zukünftige" />
+                  <CheckBox fx:id="showPastFlights" selected="false" text="Vergangene" />
                </children>
             </HBox>
 
