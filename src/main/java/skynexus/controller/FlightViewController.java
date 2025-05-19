@@ -205,6 +205,23 @@ public class FlightViewController implements Initializable {
 
     private void setupTableColumns() {
         numberColumn.setCellValueFactory(new PropertyValueFactory<>("flightNumber"));
+        
+        // Doppelklick-Handler für Tabellenzeilen zur Bearbeitung
+        flightTable.setRowFactory(tv -> {
+            TableRow<Flight> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Flight flight = row.getItem();
+                    if (flight.getStatus() == FlightStatus.SCHEDULED) {
+                        handleEditFlight(new ActionEvent());
+                    } else {
+                        showWarning("Hinweis", "Flug nicht bearbeitbar", 
+                                "Nur Flüge mit dem Status SCHEDULED können bearbeitet werden.");
+                    }
+                }
+            });
+            return row;
+        });
 
         // Abflughafen
         departureColumn.setCellValueFactory(cellData -> {
@@ -288,29 +305,22 @@ public class FlightViewController implements Initializable {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("");
+                    getStyleClass().removeAll(
+                        "status-scheduled", "status-boarding", "status-departed", "status-flying",
+                        "status-landed", "status-deplaning", "status-completed", "status-unknown",
+                        "status-cancelled", "status-delayed"
+                    );
                 } else {
                     setText(item);
-                    // Setze hier ggf. Farbkodierung je nach Status
-                    switch (item) {
-                        case "SCHEDULED":
-                            setStyle("-fx-text-fill: #3498db;");
-                            break;
-                        case "DEPARTED":
-                            setStyle("-fx-text-fill: #2ecc71;");
-                            break;
-                        case "ARRIVED":
-                            setStyle("-fx-text-fill: #27ae60;");
-                            break;
-                        case "DELAYED":
-                            setStyle("-fx-text-fill: #f39c12;");
-                            break;
-                        case "CANCELLED":
-                            setStyle("-fx-text-fill: #e74c3c;");
-                            break;
-                        default:
-                            setStyle("");
-                    }
+                    // Alle vorherigen Status-Klassen entfernen
+                    getStyleClass().removeAll(
+                        "status-scheduled", "status-boarding", "status-departed", "status-flying",
+                        "status-landed", "status-deplaning", "status-completed", "status-unknown",
+                        "status-cancelled", "status-delayed"
+                    );
+                    
+                    // CSS-Klasse basierend auf Status-Wert hinzufügen
+                    getStyleClass().add("status-" + item.toLowerCase());
                 }
             }
         });
@@ -420,6 +430,14 @@ public class FlightViewController implements Initializable {
             showWarning("Hinweis", "Kein Flug ausgewählt", "Bitte wählen Sie einen Flug aus der Tabelle aus.");
             return;
         }
+        
+        // Prüfen, ob der Flug noch im Status SCHEDULED ist
+        if (currentFlight.getStatus() != FlightStatus.SCHEDULED) {
+            showWarning("Hinweis", "Flug nicht bearbeitbar", 
+                    "Nur Flüge mit dem Status SCHEDULED können bearbeitet werden.");
+            return;
+        }
+        
         logger.info("Flug bearbeiten: {}", currentFlight.getFlightNumber());
 
         // FXML-basierter Dialog über die Factory
@@ -443,6 +461,14 @@ public class FlightViewController implements Initializable {
             showWarning("Hinweis", "Kein Flug ausgewählt", "Bitte wählen Sie einen Flug aus der Tabelle aus.");
             return;
         }
+        
+        // Prüfen, ob der Flug noch im Status SCHEDULED ist
+        if (currentFlight.getStatus() != FlightStatus.SCHEDULED) {
+            showWarning("Hinweis", "Flug nicht löschbar", 
+                    "Nur Flüge mit dem Status SCHEDULED können gelöscht werden.");
+            return;
+        }
+        
         boolean confirmed = showConfirmation("Flug löschen",
                 "Flug " + currentFlight.getFlightNumber() + " löschen?",
                 "Möchten Sie diesen Flug wirklich löschen?");

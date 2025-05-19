@@ -129,12 +129,30 @@
     -fx-opacity: 0.6;
 }
 
-/* Status-Anzeigen */
+/* Status-Anzeigen - Vereinheitlicht für alle Views */
+
+/* AircraftStatus-Enum */
 .status-available {
     -fx-text-fill: #2ecc71;
     -fx-font-weight: bold;
 }
 
+.status-scheduled {
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+}
+
+.status-flying {
+    -fx-text-fill: #9b59b6;
+    -fx-font-weight: bold;
+}
+
+.status-unknown {
+    -fx-text-fill: #95a5a6;
+    -fx-font-weight: bold;
+}
+
+/* Zusätzlich für alte Kompatibilität */
 .status-maintenance {
     -fx-text-fill: #f39c12;
     -fx-font-weight: bold;
@@ -145,31 +163,41 @@
     -fx-font-weight: bold;
 }
 
-.status-scheduled {
-    -fx-text-fill: #3498db;
-    -fx-font-weight: bold;
-}
-
+/* FlightStatus-Enum */
+/* .status-scheduled bereits definiert */
 .status-boarding {
-    -fx-text-fill: #9b59b6;
+    -fx-text-fill: #f39c12;
     -fx-font-weight: bold;
 }
 
-.status-departed,
-.status-flying {
+.status-departed {
     -fx-text-fill: #2ecc71;
     -fx-font-weight: bold;
 }
 
+/* .status-flying bereits definiert */
 .status-landed {
     -fx-text-fill: #27ae60;
     -fx-font-weight: bold;
 }
 
-.status-cancelled,
-.status-delayed {
-    -fx-text-fill: #e74c3c;
+.status-deplaning {
+    -fx-text-fill: #16a085;
     -fx-font-weight: bold;
+}
+
+.status-completed {
+    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+}
+
+/* .status-unknown bereits definiert */
+
+/* Platzhaltertexte für leere Tabellen */
+.placeholder-text {
+    -fx-font-style: italic;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 14px;
 }
 
 /* Benutzer-Stile */
