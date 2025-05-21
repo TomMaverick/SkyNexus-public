@@ -259,6 +259,9 @@ public class DashboardViewController implements Initializable {
         if (departuresTableView != null && depFlightColumn != null && depDestinationColumn != null &&
                 depTimeColumn != null && depStatusColumn != null) {
 
+            // Verbesserte Platzhaltertexte setzen
+            departuresTableView.setPlaceholder(new Label("Keine Abflüge in den nächsten 24 Stunden"));
+            
             depFlightColumn.setCellValueFactory(data ->
                     new SimpleStringProperty(data.getValue().getFlightNumber()));
             depFlightColumn.setCellFactory(column -> createStyledTableCell()); // Verwende Hilfsmethode
@@ -312,6 +315,9 @@ public class DashboardViewController implements Initializable {
         // Ankunft-Tabelle konfigurieren
         if (arrivalsTableView != null && arrFlightColumn != null && arrOriginColumn != null &&
                 arrTimeColumn != null && arrStatusColumn != null) {
+
+            // Verbesserte Platzhaltertexte setzen
+            arrivalsTableView.setPlaceholder(new Label("Keine Ankünfte in den nächsten 24 Stunden"));
 
             arrFlightColumn.setCellValueFactory(data ->
                     new SimpleStringProperty(data.getValue().getFlightNumber()));

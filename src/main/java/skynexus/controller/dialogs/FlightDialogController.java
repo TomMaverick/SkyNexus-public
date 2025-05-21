@@ -167,6 +167,47 @@ public class FlightDialogController implements Initializable {
             turnaroundMinutesSpinner.getValueFactory().setValue(Config.getDefaultTurnaroundMinutes());
         }
 
+        // Dialog für Löschfunktion konfigurieren (nur bei Bearbeitung und SCHEDULED-Status)
+        Button deleteButton = null;
+        if (flight != null && flight.getStatus() == FlightStatus.SCHEDULED) {
+            // Füge DELETE-Button hinzu
+            ButtonType deleteButtonType = new ButtonType("Löschen", ButtonBar.ButtonData.LEFT);
+            dialog.getDialogPane().getButtonTypes().add(0, deleteButtonType);
+            
+            // Referenz auf den Button holen und Stil setzen
+            deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
+            deleteButton.getStyleClass().add("btn-danger");
+            
+            // Löschen-Handler setzen
+            deleteButton.setOnAction(e -> {
+                e.consume(); // Verhindere standard Dialog-Verhalten
+                boolean confirmed = ExceptionHandler.showConfirmDialog(
+                    "Flug löschen", 
+                    "Möchten Sie den Flug " + flight.getFlightNumber() + " wirklich löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden."
+                );
+                
+                if (confirmed) {
+                    try {
+                        boolean success = flightService.deleteFlight(flight.getId());
+                        if (success) {
+                            logger.info("Flug {} erfolgreich gelöscht", flight.getFlightNumber());
+                            
+                            // Callback informieren und Dialog schließen
+                            if (saveCallback != null) {
+                                saveCallback.onSaved(flight); // Callback über Löschung informieren
+                            }
+                            dialog.close();
+                        } else {
+                            ExceptionHandler.showErrorDialog("Fehler", "Der Flug konnte nicht gelöscht werden");
+                        }
+                    } catch (Exception ex) {
+                        logger.error("Fehler beim Löschen des Flugs", ex);
+                        ExceptionHandler.handleException(ex, "beim Löschen des Flugs");
+                    }
+                }
+            });
+        }
+
         // OK-Button nur aktivieren, wenn Validierung erfolgreich
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.disableProperty().bind(
@@ -380,6 +421,7 @@ public class FlightDialogController implements Initializable {
         }
 
         flightNumberField.setText(flight.getFlightNumber());
+        flightNumberField.setDisable(true); // Flugnummer im Bearbeitungsmodus nicht änderbar
 
         // Flughäfen auswählen
         final Long depAirportId = flight.getDepartureAirport().getId();
@@ -387,12 +429,14 @@ public class FlightDialogController implements Initializable {
                 .filter(a -> a.getId().equals(depAirportId))
                 .findFirst()
                 .ifPresent(departureAirportComboBox::setValue);
+        departureAirportComboBox.setDisable(true); // Abflughafen nicht änderbar
 
         final Long arrAirportId = flight.getArrivalAirport().getId();
         arrivalAirportComboBox.getItems().stream()
                 .filter(a -> a.getId().equals(arrAirportId))
                 .findFirst()
                 .ifPresent(arrivalAirportComboBox::setValue);
+        arrivalAirportComboBox.setDisable(true); // Zielflughafen nicht änderbar
 
         // Flugzeug auswählen
         if (flight.getAircraft() != null) {
@@ -1111,6 +1155,21 @@ public class FlightDialogController implements Initializable {
             logger.warn("Kann Eingabedaten nicht sammeln - Validierungsfehler.");
             return null;
         }
+        
+        // Finale Prüfung der 45-Minuten-Regel vor dem Speichern
+        LocalDateTime plannedDepartureDateTime = LocalDateTime.of(
+                departureDatePicker.getValue(),
+                LocalTime.of(departureHourSpinner.getValue(), departureMinuteSpinner.getValue())
+        );
+        LocalDateTime minimumDepartureTime = LocalDateTime.now().plusMinutes(45);
+        
+        if (plannedDepartureDateTime.isBefore(minimumDepartureTime)) {
+            logger.warn("Flug muss mindestens 45 Minuten in der Zukunft liegen - Validierungsfehler bei finalem Check.");
+            ExceptionHandler.showWarningDialog("Ungültige Abflugzeit", 
+                    "Der Abflug muss mindestens 45 Minuten in der Zukunft liegen.",
+                    "Bitte wählen Sie ein späteres Datum oder eine spätere Uhrzeit.");
+            return null;
+        }
 
         Flight flight;
         boolean isNewFlight = (currentFlight == null);
@@ -1439,6 +1498,16 @@ public class FlightDialogController implements Initializable {
             return;
         }
         LocalTime departureTime = LocalTime.of(hourVal, minuteVal);
+        
+        // Prüfe, ob der Flug mindestens 45 Minuten in der Zukunft liegt
+        LocalDateTime plannedDepartureDateTime = LocalDateTime.of(departureDate, departureTime);
+        LocalDateTime minimumDepartureTime = LocalDateTime.now().plusMinutes(45);
+        
+        if (plannedDepartureDateTime.isBefore(minimumDepartureTime)) {
+            arrivalDateTimeLabel.setText("Abflug muss mind. 45 Min. in der Zukunft liegen");
+            isDepartureDateTimeValid.set(false);
+            return;
+        }
 
         // Berechnung der Flugzeit basierend auf dem gewählten Flugzeug und der Distanz
         double distance = calculateRouteDistance(departure, arrival);

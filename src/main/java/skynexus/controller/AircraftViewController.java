@@ -16,6 +16,7 @@ import skynexus.enums.AircraftStatus;
 import skynexus.model.*;
 import skynexus.service.AircraftService;
 import skynexus.service.AirportService;
+import skynexus.service.FlightService;
 import skynexus.service.ManufacturerService;
 import skynexus.util.ExceptionHandler;
 import skynexus.util.SessionManager;
@@ -176,25 +177,21 @@ public class AircraftViewController {
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
-                    getStyleClass().removeAll("status-available", "status-maintenance", "status-grounded");
+                    getStyleClass().removeAll(
+                        "status-available", "status-scheduled", "status-flying", 
+                        "status-unknown", "status-maintenance", "status-grounded"
+                    );
                 } else {
                     setText(item);
 
                     // Alle vorherigen Status-Klassen entfernen
-                    getStyleClass().removeAll("status-available", "status-maintenance", "status-grounded");
+                    getStyleClass().removeAll(
+                        "status-available", "status-scheduled", "status-flying", 
+                        "status-unknown", "status-maintenance", "status-grounded"
+                    );
 
                     // Passende Status-Klasse basierend auf Enum-Wert hinzufügen
-                    switch (item) {
-                        case "AVAILABLE":
-                            getStyleClass().add("status-available");
-                            break;
-                        case "MAINTENANCE":
-                            getStyleClass().add("status-maintenance");
-                            break;
-                        case "GROUNDED":
-                            getStyleClass().add("status-grounded");
-                            break;
-                    }
+                    getStyleClass().add("status-" + item.toLowerCase());
                 }
             }
         });
@@ -219,6 +216,9 @@ public class AircraftViewController {
         // Asynchrones Laden
         CompletableFuture.supplyAsync(() -> {
             try {
+                // Zuerst Status-Synchronisierung durchführen
+                FlightService.getInstance().synchronizeAircraftStatus();
+                
                 List<Aircraft> allAircraft;
                 allAircraft = aircraftService.getAllAircraft();
                 logger.info("Lade alle Flugzeuge");

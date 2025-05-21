@@ -36,6 +36,13 @@ public class FlightService {
     private final Map<String, List<Flight>> filteredFlightCache = new ConcurrentHashMap<>();
     private List<Flight> allFlightsCache = null;
     private long lastCacheRefresh = 0;
+    
+    /**
+     * Holt eine Datenbankverbindung vom DatabaseConnectionManager
+     */
+    private Connection getConnection() throws SQLException {
+        return DatabaseConnectionManager.getInstance().getConnection();
+    }
 
     /**
      * Privater Konstruktor für Singleton-Pattern
@@ -1224,9 +1231,116 @@ public class FlightService {
     }
 
     /**
-     * Hilfsmethode zum Aufbauen der Datenbankverbindung
+     * Prüft, ob ein Flugzeug aktive (geplante) Flüge hat.
+     * 
+     * @param aircraftId ID des zu prüfenden Flugzeugs
+     * @return true, wenn mindestens ein SCHEDULED Flug existiert
      */
-    private Connection getConnection() throws SQLException {
-        return DatabaseConnectionManager.getInstance().getConnection();
+    public boolean hasScheduledFlightsForAircraft(Long aircraftId) {
+        if (aircraftId == null) {
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM flights WHERE aircraft_id = ? AND status = 'SCHEDULED'";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             
+            stmt.setLong(1, aircraftId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Fehler beim Prüfen von aktiven Flügen für Flugzeug ID {}: {}", aircraftId, e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Prüft, ob ein Flugzeug sich aktuell in einem laufenden Flug befindet
+     * (BOARDING, DEPARTED, FLYING, LANDED, DEPLANING).
+     * 
+     * @param aircraftId ID des zu prüfenden Flugzeugs
+     * @return true, wenn das Flugzeug in einem aktiven Flug ist
+     */
+    public boolean hasInProgressFlightsForAircraft(Long aircraftId) {
+        if (aircraftId == null) {
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM flights WHERE aircraft_id = ? AND status IN " +
+                     "('BOARDING', 'DEPARTED', 'FLYING', 'LANDED', 'DEPLANING')";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             
+            stmt.setLong(1, aircraftId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Fehler beim Prüfen von laufenden Flügen für Flugzeug ID {}: {}", aircraftId, e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Synchronisiert den Status aller Flugzeuge mit ihren aktuellen Flügen.
+     * Korrigiert fehlerhafte Status (z.B. FLYING ohne aktiven Flug).
+     */
+    public void synchronizeAircraftStatus() {
+        logger.info("Starte Synchronisierung der Flugzeugstatus...");
+        
+        try {
+            List<Aircraft> allAircraft = AircraftService.getInstance().getAllAircraft();
+            
+            for (Aircraft aircraft : allAircraft) {
+                AircraftStatus currentStatus = aircraft.getStatus();
+                AircraftStatus correctStatus = calculateCorrectAircraftStatus(aircraft);
+                
+                if (currentStatus != correctStatus) {
+                    logger.info("Korrigiere Flugzeugstatus für {}: {} -> {}", 
+                            aircraft.getRegistrationNo(), currentStatus, correctStatus);
+                    
+                    // Status aktualisieren
+                    aircraft.setStatus(correctStatus);
+                    updateAircraftStatusInDatabase(aircraft.getId(), correctStatus);
+                }
+            }
+            
+            logger.info("Flugzeugstatus-Synchronisierung abgeschlossen");
+        } catch (Exception e) {
+            logger.error("Fehler bei der Synchronisierung der Flugzeugstatus: {}", e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Berechnet den korrekten Status eines Flugzeugs basierend auf seinen Flügen
+     */
+    private AircraftStatus calculateCorrectAircraftStatus(Aircraft aircraft) {
+        if (aircraft == null || aircraft.getId() == null) {
+            return AircraftStatus.UNKNOWN;
+        }
+        
+        // Prüfe auf laufende Flüge (BOARDING, DEPARTED, FLYING, LANDED, DEPLANING)
+        if (hasInProgressFlightsForAircraft(aircraft.getId())) {
+            return AircraftStatus.FLYING;
+        }
+        
+        // Prüfe auf geplante Flüge (SCHEDULED)
+        if (hasScheduledFlightsForAircraft(aircraft.getId())) {
+            return AircraftStatus.SCHEDULED;
+        }
+        
+        // Keine aktiven oder geplanten Flüge
+        return AircraftStatus.AVAILABLE;
     }
 }
