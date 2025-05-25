@@ -75,7 +75,6 @@
           <include>config/*.properties</include>
           <include>fxml/**/*.fxml</include>
           <include>css/**/*.css</include>
-          <include>i18n/**/*.properties</include>
           <include>images/**/*</include>
           <include>sql/**/*.sql</include>
           <include>logback.xml</include>
